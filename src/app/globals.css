@@ -44,6 +44,14 @@
   --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
   --font-mono: var(--font-geist-mono), ui-monospace, monospace;
 
+  /* Pokémon cards are always dark, regardless of site theme, so artwork
+     glows consistently — fixed tokens rather than the light/dark pair above. */
+  --card-surface: #111318;
+  --card-surface-hover: #17191f;
+  --card-border: #24262d;
+  --card-foreground: #f5f6f8;
+  --card-muted: #9aa1b0;
+
   /* Pokémon type colors */
   --type-normal: #a8a77a;
   --type-fire: #ee8130;
@@ -103,6 +111,11 @@
 
   --color-primary: var(--primary);
   --color-primary-foreground: var(--primary-foreground);
+
+  --color-card-surface: var(--card-surface);
+  --color-card-border: var(--card-border);
+  --color-card-foreground: var(--card-foreground);
+  --color-card-muted: var(--card-muted);
 
   --color-success: var(--success);
   --color-warning: var(--warning);

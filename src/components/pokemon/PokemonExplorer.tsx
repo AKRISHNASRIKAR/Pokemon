@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { Search, SlidersHorizontal, X } from "lucide-react";
+import { Loader2, RefreshCw, Search, SlidersHorizontal, X } from "lucide-react";
 import { POKEMON_TYPES, type PokemonTypeName } from "@/constants/pokemonTypes";
 import {
   POKEMON_GRID_CLASSES,
@@ -9,22 +9,30 @@ import {
 } from "@/components/pokemon/PokemonGrid";
 import { PokemonCardSkeleton } from "@/components/ui/Skeleton";
 import { ErrorState } from "@/components/ui/ErrorState";
-import { getPokemon, getPokemonNamesByType } from "@/services/pokemonApi";
+import { Button } from "@/components/ui/Button";
+import {
+  getPokemon,
+  getPokemonListWithDetails,
+  getPokemonNamesByType,
+} from "@/services/pokemonApi";
 import { capitalize, cn } from "@/lib/utils";
 import type { Pokemon } from "@/types/pokemon";
 
 const RESULTS_LIMIT = 24;
 const DEBOUNCE_MS = 300;
 const SKELETON_COUNT = 8;
+const PAGE_SIZE = 20;
 
 interface PokemonExplorerProps {
   initialPokemons: Pokemon[];
   allNames: string[];
+  totalCount: number;
 }
 
 export function PokemonExplorer({
   initialPokemons,
   allNames,
+  totalCount,
 }: PokemonExplorerProps) {
   const [query, setQuery] = useState("");
   const [debouncedQuery, setDebouncedQuery] = useState("");
@@ -35,6 +43,11 @@ export function PokemonExplorer({
   const [searchResults, setSearchResults] = useState<Pokemon[]>([]);
   const [status, setStatus] = useState<"idle" | "loading" | "error">("idle");
   const [totalMatches, setTotalMatches] = useState<number | null>(null);
+
+  const [browsedPokemons, setBrowsedPokemons] = useState(initialPokemons);
+  const [loadMoreStatus, setLoadMoreStatus] = useState<
+    "idle" | "loading" | "error"
+  >("idle");
 
   const typeCache = useRef(new Map<PokemonTypeName, string[]>());
   const requestId = useRef(0);
@@ -48,7 +61,23 @@ export function PokemonExplorer({
   }, [query]);
 
   const isFiltering = debouncedQuery !== "" || selectedType !== null;
-  const pokemons = isFiltering ? searchResults : initialPokemons;
+  const pokemons = isFiltering ? searchResults : browsedPokemons;
+  const hasMore = browsedPokemons.length < totalCount;
+
+  async function loadMore() {
+    setLoadMoreStatus("loading");
+
+    try {
+      const next = await getPokemonListWithDetails(
+        PAGE_SIZE,
+        browsedPokemons.length
+      );
+      setBrowsedPokemons((current) => [...current, ...next]);
+      setLoadMoreStatus("idle");
+    } catch {
+      setLoadMoreStatus("error");
+    }
+  }
 
   useEffect(() => {
     if (!isFiltering) {
@@ -239,7 +268,62 @@ export function PokemonExplorer({
           )}
         </>
       ) : (
-        <PokemonGrid pokemons={pokemons} />
+        <>
+          <PokemonGrid pokemons={pokemons} />
+
+          {loadMoreStatus === "loading" && (
+            <div className={POKEMON_GRID_CLASSES} aria-hidden="true">
+              {Array.from({ length: PAGE_SIZE }).map((_, index) => (
+                <PokemonCardSkeleton key={index} />
+              ))}
+            </div>
+          )}
+
+          {loadMoreStatus === "error" && (
+            <div className="flex flex-col items-center gap-3 text-center">
+              <p className="text-sm text-muted">
+                Something went wrong while loading more Pokémon.
+              </p>
+              <Button
+                variant="secondary"
+                onClick={loadMore}
+                className="gap-2 px-8 py-3"
+              >
+                <RefreshCw className="size-4" aria-hidden="true" />
+                Try again
+              </Button>
+            </div>
+          )}
+
+          {loadMoreStatus !== "error" && hasMore && (
+            <div className="flex justify-center">
+              <Button
+                variant="secondary"
+                onClick={loadMore}
+                disabled={loadMoreStatus === "loading"}
+                className="gap-2 px-8 py-3"
+              >
+                {loadMoreStatus === "loading" ? (
+                  <>
+                    <Loader2
+                      className="size-4 animate-spin"
+                      aria-hidden="true"
+                    />
+                    Loading...
+                  </>
+                ) : (
+                  "Load More"
+                )}
+              </Button>
+            </div>
+          )}
+
+          {!hasMore && (
+            <p className="text-center text-sm text-muted">
+              You&apos;ve found all {totalCount.toLocaleString()} Pokémon.
+            </p>
+          )}
+        </>
       )}
     </div>
   );

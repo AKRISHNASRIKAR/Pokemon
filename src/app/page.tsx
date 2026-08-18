@@ -15,6 +15,7 @@ export default async function Home() {
       <PokemonExplorer
         initialPokemons={pokemons}
         allNames={allNames.map((item) => item.name)}
+        totalCount={allNames.length}
       />
     </Container>
   );
