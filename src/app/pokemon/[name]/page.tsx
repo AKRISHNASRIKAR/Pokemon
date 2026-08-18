@@ -1,5 +1,5 @@
 import Image from "next/image";
-import Link from "next/link";
+import { Link } from "next-view-transitions";
 import { ArrowLeft, ImageOff } from "lucide-react";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
@@ -71,6 +71,7 @@ export default async function PokemonPage({ params }: PokemonPageProps) {
           style={{
             background:
               "color-mix(in srgb, var(--type-color) 14%, var(--surface-secondary))",
+            viewTransitionName: `pokemon-artwork-${pokemon.name}`,
           }}
         >
           {artwork ? (
@@ -93,7 +94,10 @@ export default async function PokemonPage({ params }: PokemonPageProps) {
           <span className="text-sm font-medium text-muted-foreground">
             {formatPokemonId(pokemon.id)}
           </span>
-          <h1 className="text-4xl font-semibold tracking-tight text-foreground md:text-5xl">
+          <h1
+            style={{ viewTransitionName: `pokemon-name-${pokemon.name}` }}
+            className="text-4xl font-semibold tracking-tight text-foreground md:text-5xl"
+          >
             {capitalize(pokemon.name)}
           </h1>
           {species?.genus && (
