@@ -41,7 +41,7 @@
   --transition-fast: 150ms ease;
   --transition-normal: 250ms ease;
 
-  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-sans: var(--font-outfit), ui-sans-serif, system-ui, sans-serif;
   --font-mono: var(--font-geist-mono), ui-monospace, monospace;
 
   /* Pokémon cards stay charcoal-dark in both themes (so artwork glows

@@ -13,7 +13,7 @@ export function Header() {
 
         <Link
           href="/"
-          className="transition-fast flex flex-1 items-center justify-center hover:opacity-80"
+          className="transition-fast flex items-center justify-center shrink-0 hover:opacity-80"
           aria-label="Pokémon Explorer home"
         >
           <Image
