@@ -1,0 +1,260 @@
+@import "tailwindcss";
+
+/* ==========================================================================
+   Design tokens
+   ========================================================================== */
+
+:root {
+  --container-max-width: 1400px;
+  --page-padding: 1.25rem;
+
+  --background: #f8f9fb;
+  --foreground: #17181c;
+
+  --surface: #ffffff;
+  --surface-secondary: #f1f3f6;
+
+  --border: #e5e7eb;
+  --border-strong: #d1d5db;
+
+  --muted: #6b7280;
+  --muted-foreground: #9ca3af;
+
+  --primary: #18181b;
+  --primary-foreground: #ffffff;
+
+  --success: #22c55e;
+  --warning: #f59e0b;
+  --error: #ef4444;
+  --info: #3b82f6;
+
+  --radius-sm: 0.5rem;
+  --radius-md: 0.75rem;
+  --radius-lg: 1rem;
+  --radius-xl: 1.5rem;
+  --radius-2xl: 2rem;
+
+  --shadow-sm: 0 1px 2px rgb(0 0 0 / 0.05);
+  --shadow-md: 0 4px 12px rgb(0 0 0 / 0.08);
+  --shadow-lg: 0 12px 30px rgb(0 0 0 / 0.1);
+
+  --transition-fast: 150ms ease;
+  --transition-normal: 250ms ease;
+
+  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, monospace;
+
+  /* Pokémon type colors */
+  --type-normal: #a8a77a;
+  --type-fire: #ee8130;
+  --type-water: #6390f0;
+  --type-electric: #f7d02c;
+  --type-grass: #7ac74c;
+  --type-ice: #96d9d6;
+  --type-fighting: #c22e28;
+  --type-poison: #a33ea1;
+  --type-ground: #e2bf65;
+  --type-flying: #a98ff3;
+  --type-psychic: #f95587;
+  --type-bug: #a6b91a;
+  --type-rock: #b6a136;
+  --type-ghost: #735797;
+  --type-dragon: #6f35fc;
+  --type-dark: #705746;
+  --type-steel: #b7b7ce;
+  --type-fairy: #d685ad;
+}
+
+.dark {
+  --background: #101114;
+  --foreground: #f4f5f7;
+
+  --surface: #17181c;
+  --surface-secondary: #1e2024;
+
+  --border: #2a2c31;
+  --border-strong: #3a3d44;
+
+  --muted: #9ca3af;
+  --muted-foreground: #6b7280;
+
+  --primary: #f4f5f7;
+  --primary-foreground: #17181c;
+
+  --shadow-sm: 0 1px 2px rgb(0 0 0 / 0.2);
+  --shadow-md: 0 4px 12px rgb(0 0 0 / 0.3);
+  --shadow-lg: 0 12px 30px rgb(0 0 0 / 0.4);
+}
+
+/* Map tokens onto Tailwind's theme so utilities like bg-surface, text-muted,
+   rounded-lg and shadow-md read straight from the design tokens above. */
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+
+  --color-surface: var(--surface);
+  --color-surface-secondary: var(--surface-secondary);
+
+  --color-border: var(--border);
+  --color-border-strong: var(--border-strong);
+
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+
+  --color-success: var(--success);
+  --color-warning: var(--warning);
+  --color-error: var(--error);
+  --color-info: var(--info);
+
+  --radius-sm: var(--radius-sm);
+  --radius-md: var(--radius-md);
+  --radius-lg: var(--radius-lg);
+  --radius-xl: var(--radius-xl);
+  --radius-2xl: var(--radius-2xl);
+
+  --shadow-sm: var(--shadow-sm);
+  --shadow-md: var(--shadow-md);
+  --shadow-lg: var(--shadow-lg);
+
+  --font-sans: var(--font-sans);
+  --font-mono: var(--font-mono);
+}
+
+/* ==========================================================================
+   Pokémon type utility classes
+   Usage: <div class="type-fire"> exposes --type-color for children to use
+   via `var(--type-color)` (backgrounds, borders, text, gradients, etc.)
+   ========================================================================== */
+
+.type-normal {
+  --type-color: var(--type-normal);
+}
+.type-fire {
+  --type-color: var(--type-fire);
+}
+.type-water {
+  --type-color: var(--type-water);
+}
+.type-electric {
+  --type-color: var(--type-electric);
+}
+.type-grass {
+  --type-color: var(--type-grass);
+}
+.type-ice {
+  --type-color: var(--type-ice);
+}
+.type-fighting {
+  --type-color: var(--type-fighting);
+}
+.type-poison {
+  --type-color: var(--type-poison);
+}
+.type-ground {
+  --type-color: var(--type-ground);
+}
+.type-flying {
+  --type-color: var(--type-flying);
+}
+.type-psychic {
+  --type-color: var(--type-psychic);
+}
+.type-bug {
+  --type-color: var(--type-bug);
+}
+.type-rock {
+  --type-color: var(--type-rock);
+}
+.type-ghost {
+  --type-color: var(--type-ghost);
+}
+.type-dragon {
+  --type-color: var(--type-dragon);
+}
+.type-dark {
+  --type-color: var(--type-dark);
+}
+.type-steel {
+  --type-color: var(--type-steel);
+}
+.type-fairy {
+  --type-color: var(--type-fairy);
+}
+
+/* ==========================================================================
+   Base / reset
+   ========================================================================== */
+
+* {
+  border-color: var(--border);
+}
+
+html {
+  color-scheme: light;
+}
+
+html.dark {
+  color-scheme: dark;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans);
+}
+
+/* Responsive container: centers content and caps width, with consistent
+   horizontal padding that scales up on larger screens. */
+.container {
+  width: 100%;
+  max-width: var(--container-max-width);
+  margin-inline: auto;
+  padding-inline: var(--page-padding);
+}
+
+/* Convenience hooks for the transition tokens (they carry a timing
+   function, not just a duration, so they apply via `transition` directly
+   rather than Tailwind's duration-[] utility). */
+.transition-fast {
+  transition: var(--transition-fast);
+}
+
+.transition-normal {
+  transition: var(--transition-normal);
+}
+
+@media (min-width: 768px) {
+  .container {
+    --page-padding: 2rem;
+  }
+}
+
+@media (min-width: 1280px) {
+  .container {
+    --page-padding: 3rem;
+  }
+}
+
+/* ==========================================================================
+   Accessibility
+   ========================================================================== */
+
+:focus-visible {
+  outline: 2px solid var(--info);
+  outline-offset: 2px;
+  border-radius: var(--radius-sm);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
