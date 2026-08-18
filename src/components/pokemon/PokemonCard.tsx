@@ -6,6 +6,7 @@ import { motion } from "framer-motion";
 import { ImageOff } from "lucide-react";
 import type { Pokemon } from "@/types/pokemon";
 import { capitalize, formatPokemonId, getPokemonArtwork } from "@/lib/utils";
+import { TypeBadge } from "@/components/pokemon/TypeBadge";
 
 interface PokemonCardProps {
   pokemon: Pokemon;
@@ -30,16 +31,7 @@ export function PokemonCard({ pokemon }: PokemonCardProps) {
           <span className="text-sm font-medium text-muted-foreground">
             {formatPokemonId(pokemon.id)}
           </span>
-          <span
-            className="rounded-full px-2.5 py-0.5 text-xs font-medium"
-            style={{
-              color: "var(--type-color)",
-              background:
-                "color-mix(in srgb, var(--type-color) 16%, var(--surface))",
-            }}
-          >
-            {capitalize(primaryType)}
-          </span>
+          <TypeBadge type={primaryType} variant="solid" />
         </div>
 
         <div
@@ -70,18 +62,7 @@ export function PokemonCard({ pokemon }: PokemonCardProps) {
           </h3>
           <div className="flex flex-wrap gap-1.5">
             {pokemon.types.map(({ type }) => (
-              <span
-                key={type.name}
-                className={`type-${type.name} inline-flex items-center gap-1.5 rounded-full border px-2 py-0.5 text-xs font-medium text-foreground`}
-                style={{ borderColor: "var(--border)" }}
-              >
-                <span
-                  className="size-1.5 rounded-full"
-                  style={{ background: "var(--type-color)" }}
-                  aria-hidden="true"
-                />
-                {capitalize(type.name)}
-              </span>
+              <TypeBadge key={type.name} type={type.name} />
             ))}
           </div>
         </div>

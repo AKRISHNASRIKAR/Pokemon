@@ -1,4 +1,10 @@
-import type { Pokemon, PokemonListResponse } from "@/types/pokemon";
+import type {
+  Pokemon,
+  PokemonListItem,
+  PokemonListResponse,
+  PokemonSpecies,
+} from "@/types/pokemon";
+import type { PokemonTypeName } from "@/constants/pokemonTypes";
 
 const BASE_URL = "https://pokeapi.co/api/v2";
 
@@ -68,4 +74,68 @@ export async function getPokemonListWithDetails(
 ): Promise<Pokemon[]> {
   const list = await getPokemonList(limit, offset);
   return Promise.all(list.results.map((item) => getPokemon(item.name)));
+}
+
+/**
+ * Fetches the full name/url catalog for every Pokémon in one request, used
+ * to power instant client-side name search without loading every detail.
+ */
+export async function getAllPokemonNames(): Promise<PokemonListItem[]> {
+  const list = await getPokemonList(20000, 0);
+  return list.results;
+}
+
+interface RawPokemonTypeDetail {
+  pokemon: { pokemon: { name: string; url: string } }[];
+}
+
+/** Fetches every Pokémon name belonging to a given type. */
+export async function getPokemonNamesByType(
+  type: PokemonTypeName
+): Promise<string[]> {
+  const response = await fetch(`${BASE_URL}/type/${type}`);
+
+  if (!response.ok) {
+    throw new PokemonApiError(
+      `Failed to load Pokémon for type "${type}" (status ${response.status}).`,
+      response.status
+    );
+  }
+
+  const data = (await response.json()) as RawPokemonTypeDetail;
+  return data.pokemon.map((entry) => entry.pokemon.name);
+}
+
+interface RawPokemonSpecies {
+  flavor_text_entries: { flavor_text: string; language: { name: string } }[];
+  genera: { genus: string; language: { name: string } }[];
+}
+
+/** Fetches supplementary species data (flavor text, genus) for a Pokémon. */
+export async function getPokemonSpecies(
+  id: number
+): Promise<PokemonSpecies> {
+  const response = await fetch(`${BASE_URL}/pokemon-species/${id}`);
+
+  if (!response.ok) {
+    throw new PokemonApiError(
+      `Failed to load species data for Pokémon #${id} (status ${response.status}).`,
+      response.status
+    );
+  }
+
+  const data = (await response.json()) as RawPokemonSpecies;
+  const flavorEntry = data.flavor_text_entries.find(
+    (entry) => entry.language.name === "en"
+  );
+  const genusEntry = data.genera.find((entry) => entry.language.name === "en");
+
+  return {
+    flavorText: flavorEntry
+      ? flavorEntry.flavor_text
+          .replace(/[\n\f\r]+/g, " ")
+          .replace(/pok[eé]mon/gi, "Pokémon")
+      : null,
+    genus: genusEntry?.genus ?? null,
+  };
 }

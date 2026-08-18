@@ -57,3 +57,8 @@ export interface Pokemon {
   abilities: PokemonAbility[];
   stats: PokemonStat[];
 }
+
+export interface PokemonSpecies {
+  flavorText: string | null;
+  genus: string | null;
+}

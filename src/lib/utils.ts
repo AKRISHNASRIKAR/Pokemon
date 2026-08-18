@@ -9,6 +9,24 @@ export function capitalize(value: string): string {
   return value.charAt(0).toUpperCase() + value.slice(1);
 }
 
+/** Turns a kebab-case API slug into a readable label, e.g. "solar-power" -> "Solar Power". */
+export function formatSlug(value: string): string {
+  return value.split("-").map(capitalize).join(" ");
+}
+
+const STAT_LABELS: Record<string, string> = {
+  hp: "HP",
+  attack: "Attack",
+  defense: "Defense",
+  "special-attack": "Sp. Atk",
+  "special-defense": "Sp. Def",
+  speed: "Speed",
+};
+
+export function formatStatName(name: string): string {
+  return STAT_LABELS[name] ?? formatSlug(name);
+}
+
 /** Formats a Pokémon id as a zero-padded dex number, e.g. 7 -> "#007". */
 export function formatPokemonId(id: number): string {
   return `#${String(id).padStart(3, "0")}`;
