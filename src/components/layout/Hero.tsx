@@ -1,3 +1,6 @@
+import { Swords } from "lucide-react";
+import { Button } from "@/components/ui/Button";
+
 export function Hero() {
   return (
     <div className="flex flex-col gap-3 py-10 md:py-16">
@@ -11,6 +14,12 @@ export function Hero() {
         Browse every Pokémon with clean, detailed stats, types, and artwork
         in one fast, modern explorer.
       </p>
+      <div className="mt-2">
+        <Button href="/compare" variant="gradient" className="gap-2">
+          <Swords className="size-4" aria-hidden="true" />
+          Compare two Pokémon
+        </Button>
+      </div>
     </div>
   );
 }

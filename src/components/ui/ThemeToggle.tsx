@@ -41,8 +41,7 @@ export function ThemeToggle() {
       "(prefers-reduced-motion: reduce)"
     ).matches;
 
-    // Let an in-flight fade finish on its own rather than starting an
-    // overlapping one — the browser would just abort the first anyway.
+    // Prevent overlapping transitions.
     if (
       !document.startViewTransition ||
       prefersReducedMotion ||
@@ -56,9 +55,7 @@ export function ThemeToggle() {
     const transition = document.startViewTransition(applyTheme);
     pendingTransition.current = transition;
 
-    // `ready` rejects (not `finished`) when the transition is skipped before
-    // it can begin — e.g. clicking again mid-fade. The theme itself is
-    // already applied by the callback above either way, so just swallow it.
+    // Swallow ready rejection if transition skipped.
     transition.ready.catch(() => {});
 
     transition.finished.finally(() => {

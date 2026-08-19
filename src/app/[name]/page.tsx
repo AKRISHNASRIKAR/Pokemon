@@ -1,13 +1,13 @@
-import Image from "next/image";
-import Link from "next/link";
-import { ArrowLeft, ImageOff, Ruler, Weight } from "lucide-react";
+import { Ruler, Weight } from "lucide-react";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { Container } from "@/components/layout/Container";
+import { BackLink } from "@/components/ui/BackLink";
 import { TypeBadge } from "@/components/pokemon/TypeBadge";
 import { StatBar } from "@/components/pokemon/StatBar";
 import { MovesList } from "@/components/pokemon/MovesList";
 import { PokemonGrid } from "@/components/pokemon/PokemonGrid";
+import { PokemonArtwork } from "@/components/pokemon/PokemonArtwork";
 import {
   getPokemon,
   getPokemonSpecies,
@@ -65,13 +65,7 @@ export default async function PokemonPage({ params }: PokemonPageProps) {
     <Container
       className={`type-${primaryType} flex flex-col gap-10 py-8 md:py-12`}
     >
-      <Link
-        href="/"
-        className="transition-fast inline-flex w-fit items-center gap-2 text-sm font-medium text-muted hover:text-foreground"
-      >
-        <ArrowLeft className="size-4" aria-hidden="true" />
-        Back to explorer
-      </Link>
+      <BackLink className="w-fit" />
 
       <div className="grid gap-8 md:grid-cols-2 md:items-center md:gap-12">
         <div className="dot-grid relative mx-auto aspect-square w-full max-w-sm overflow-hidden rounded-3xl border border-[var(--card-border)] bg-[var(--card-surface)]">
@@ -80,20 +74,15 @@ export default async function PokemonPage({ params }: PokemonPageProps) {
             className="absolute inset-8 rounded-full opacity-40 blur-3xl"
             style={{ background: "var(--type-color)" }}
           />
-          {artwork ? (
-            <Image
-              src={artwork}
-              alt={capitalize(pokemon.name)}
-              fill
-              sizes="(min-width: 768px) 40vw, 90vw"
-              className="animate-float relative object-contain p-10 drop-shadow-2xl"
-              priority
-            />
-          ) : (
-            <div className="relative flex h-full w-full items-center justify-center text-[var(--card-muted)]">
-              <ImageOff className="size-16" aria-hidden="true" />
-            </div>
-          )}
+          <PokemonArtwork
+            src={artwork}
+            alt={capitalize(pokemon.name)}
+            sizes="(min-width: 768px) 40vw, 90vw"
+            priority
+            transitionName={`pokemon-artwork-${pokemon.id}`}
+            fallbackClassName="size-16"
+            className="animate-float relative object-contain p-10 drop-shadow-2xl"
+          />
         </div>
 
         <div className="flex flex-col gap-4">

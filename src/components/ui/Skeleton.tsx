@@ -44,3 +44,18 @@ export function PokemonGridSkeleton({ count = 20 }: PokemonGridSkeletonProps) {
     </div>
   );
 }
+
+export function SearchFiltersSkeleton() {
+  return (
+    <div className="flex flex-col gap-8 md:gap-10" aria-hidden="true">
+      <div className="flex flex-col gap-3 sm:flex-row">
+        <Skeleton className="h-[42px] flex-1 rounded-full" />
+        <div className="flex gap-3">
+          <Skeleton className="h-[42px] w-[100px] rounded-full" />
+          <Skeleton className="h-[42px] w-[140px] rounded-full" />
+        </div>
+      </div>
+      <PokemonGridSkeleton count={20} />
+    </div>
+  );
+}

@@ -30,6 +30,11 @@ const TONE_SURFACE_VAR: Record<TypeBadgeTone, string> = {
   onDark: "var(--card-surface)",
 };
 
+const TONE_TEXT_CLASS: Record<TypeBadgeTone, string> = {
+  default: "text-foreground",
+  onDark: "text-[var(--card-foreground)]",
+};
+
 /** Type badge pill. */
 export function TypeBadge({
   type,
@@ -44,17 +49,18 @@ export function TypeBadge({
         `type-${type}`,
         "inline-flex items-center rounded-full font-medium",
         SIZE_CLASSES[size],
-        variant === "outline"
-          ? tone === "onDark"
-            ? "border border-[var(--card-border)] text-[var(--card-foreground)]"
-            : "border border-border text-foreground"
-          : "text-[var(--type-color)]",
+        variant === "outline" && tone === "onDark"
+          ? "border border-[var(--card-border)]"
+          : variant === "outline"
+            ? "border border-border"
+            : undefined,
+        TONE_TEXT_CLASS[tone],
         className
       )}
       style={
         variant === "solid"
           ? {
-              background: `color-mix(in srgb, var(--type-color) 18%, ${TONE_SURFACE_VAR[tone]})`,
+              background: `color-mix(in srgb, var(--type-color) 20%, ${TONE_SURFACE_VAR[tone]})`,
             }
           : undefined
       }

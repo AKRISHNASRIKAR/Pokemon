@@ -1,13 +1,13 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
 import { m } from "framer-motion";
-import { ArrowUpRight, ImageOff } from "lucide-react";
+import { ArrowUpRight } from "lucide-react";
 import type { Pokemon } from "@/types/pokemon";
 import { capitalize, formatPokemonId, getPokemonArtwork } from "@/lib/utils";
 import { TypeBadge } from "@/components/pokemon/TypeBadge";
 import { TiltCard } from "@/components/ui/TiltCard";
+import { PokemonArtwork } from "@/components/pokemon/PokemonArtwork";
 
 interface PokemonCardProps {
   pokemon: Pokemon;
@@ -41,7 +41,6 @@ export function PokemonCard({
             delay: Math.min(index * 0.04, 0.4),
             ease: "easeOut",
           }}
-          whileHover={{ y: -4, transition: { duration: 0.2, ease: "easeOut" } }}
           className="transition-normal relative flex h-full flex-col gap-2 rounded-3xl border border-[var(--card-border)] bg-[var(--card-surface)] p-4 pt-5 shadow-sm group-hover:border-[var(--type-color)]/40 group-hover:bg-[var(--card-surface-hover)] group-hover:shadow-lg group-focus-visible:outline-2 group-focus-visible:outline-offset-2 group-focus-visible:outline-info"
         >
           <div className="absolute top-4 left-4 z-10 text-xs font-medium text-[var(--card-muted)]">
@@ -60,27 +59,21 @@ export function PokemonCard({
               className="absolute inset-4 rounded-full opacity-30 blur-2xl transition-opacity duration-300 group-hover:opacity-70"
               style={{ background: "var(--type-color)" }}
             />
-            {artwork ? (
-              <Image
-                src={artwork}
-                alt={capitalize(pokemon.name)}
-                fill
-                sizes="(min-width: 1280px) 18vw, (min-width: 1024px) 23vw, (min-width: 640px) 33vw, 45vw"
-                priority={priority}
-                className="relative object-contain p-3 transition-normal group-hover:-translate-y-2 group-hover:scale-110"
-              />
-            ) : (
-              <div className="relative flex h-full w-full items-center justify-center text-[var(--card-muted)]">
-                <ImageOff className="size-10" aria-hidden="true" />
-              </div>
-            )}
+            <PokemonArtwork
+              src={artwork}
+              alt={capitalize(pokemon.name)}
+              sizes="(min-width: 1280px) 18vw, (min-width: 1024px) 23vw, (min-width: 640px) 33vw, 45vw"
+              priority={priority}
+              transitionName={`pokemon-artwork-${pokemon.id}`}
+              className="relative object-contain p-3 transition-normal group-hover:-translate-y-2 group-hover:scale-110"
+            />
           </div>
 
           <div className="mt-auto flex flex-col gap-2 pt-1">
             <div className="flex items-center justify-center gap-1">
-              <h3 className="truncate text-base font-semibold text-[var(--card-foreground)] group-hover:underline">
+              <h2 className="truncate text-base font-semibold text-[var(--card-foreground)] group-hover:underline">
                 {capitalize(pokemon.name)}
-              </h3>
+              </h2>
               <ArrowUpRight
                 aria-hidden="true"
                 className="size-0 shrink-0 scale-0 text-[var(--card-foreground)] opacity-0 transition-transform duration-200 group-hover:size-4 group-hover:scale-100 group-hover:opacity-100"

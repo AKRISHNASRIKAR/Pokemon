@@ -21,6 +21,7 @@ export function Header() {
             alt="Pokémon"
             width={174}
             height={64}
+            quality={65}
             loading="eager"
             fetchPriority="high"
             className="h-11 w-auto drop-shadow-sm sm:h-12"

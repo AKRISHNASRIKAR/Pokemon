@@ -17,8 +17,8 @@
   --border: #dcdee3;
   --border-strong: #c7cad1;
 
-  --muted: #6b7280;
-  --muted-foreground: #9ca3af;
+  --muted: #4b5563;
+  --muted-foreground: #6b7280;
 
   --primary: #18181b;
   --primary-foreground: #ffffff;
@@ -40,12 +40,12 @@
 
   /* A soft two-tone glow for standout CTAs (e.g. "Load More"), built from
      the same type-color tokens used everywhere else rather than new hex. */
-  --gradient-glow: linear-gradient(135deg, var(--type-water), var(--type-fairy));
+  --gradient-glow: linear-gradient(135deg, var(--type-water), var(--type-electric));
   --shadow-glow: 0 6px 20px -6px color-mix(in srgb, var(--type-water) 55%, transparent),
-    0 10px 30px -8px color-mix(in srgb, var(--type-fairy) 55%, transparent);
+    0 10px 30px -8px color-mix(in srgb, var(--type-electric) 55%, transparent);
   --shadow-glow-hover: 0 8px 24px -4px
       color-mix(in srgb, var(--type-water) 65%, transparent),
-    0 14px 38px -6px color-mix(in srgb, var(--type-fairy) 65%, transparent);
+    0 14px 38px -6px color-mix(in srgb, var(--type-electric) 65%, transparent);
 
   --transition-fast: 150ms ease;
   --transition-normal: 250ms ease;
@@ -290,6 +290,15 @@ select:not(:disabled),
   outline: 2px solid var(--info);
   outline-offset: 2px;
   border-radius: var(--radius-sm);
+}
+
+/* Search/filter/sort controls show focus via their own border-color
+   instead of the default ring — applied as a plain class (not a Tailwind
+   `focus:outline-none` utility) because Tailwind v4's utilities live in a
+   named CSS layer, and this file's unlayered :focus-visible rule above
+   always wins over layered styles regardless of specificity. */
+.no-focus-ring:focus-visible {
+  outline: none;
 }
 
 @media (prefers-reduced-motion: reduce) {

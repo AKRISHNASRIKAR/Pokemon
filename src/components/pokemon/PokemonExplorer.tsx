@@ -90,10 +90,7 @@ export function PokemonExplorer({
     const queryString = params.toString();
     const nextSearch = queryString ? `?${queryString}` : "";
 
-    // Skip the replace when the URL already matches — otherwise this fires
-    // a real navigation on every mount (including landing back on this page
-    // from the detail route), which resets scroll and re-renders the route
-    // for no reason.
+    // Skip replace if URL matches to prevent unnecessary re-renders.
     if (nextSearch === window.location.search) return;
 
     router.replace(`${pathname}${nextSearch}`, { scroll: false });
@@ -251,14 +248,14 @@ export function PokemonExplorer({
             onKeyDown={handleSearchKeyDown}
             placeholder="Search Pokémon by name..."
             aria-label="Search Pokémon by name"
-            className="w-full rounded-full border border-border bg-surface py-2.5 pr-9 pl-10 text-sm text-foreground placeholder:text-muted-foreground focus:border-border-strong focus:outline-none"
+            className="no-focus-ring w-full rounded-full border border-border bg-surface py-2.5 pr-9 pl-10 text-sm text-foreground placeholder:text-muted-foreground focus:border-border-strong"
           />
           {query ? (
             <button
               type="button"
               onClick={() => setQuery("")}
               aria-label="Clear search"
-              className="absolute top-1/2 right-3 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+              className="no-focus-ring absolute top-1/2 right-3 -translate-y-1/2 text-muted-foreground hover:text-foreground focus-visible:text-foreground"
             >
               <X className="size-4" aria-hidden="true" />
             </button>
@@ -275,10 +272,10 @@ export function PokemonExplorer({
             onClick={() => setShowFilters((value) => !value)}
             aria-expanded={showFilters}
             className={cn(
-              "transition-fast inline-flex items-center justify-center gap-2 rounded-full border px-4 py-2.5 text-sm font-medium",
+              "no-focus-ring transition-fast inline-flex items-center justify-center gap-2 rounded-full border px-4 py-2.5 text-sm font-medium",
               selectedType
-                ? "border-transparent bg-primary text-primary-foreground"
-                : "border-border bg-surface text-foreground hover:border-border-strong"
+                ? "border-transparent bg-primary text-primary-foreground focus-visible:ring-2 focus-visible:ring-info focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+                : "border-border bg-surface text-foreground hover:border-border-strong focus-visible:border-border-strong"
             )}
           >
             <SlidersHorizontal className="size-4" aria-hidden="true" />
@@ -307,10 +304,10 @@ export function PokemonExplorer({
                 aria-pressed={isSelected}
                 className={cn(
                   `type-${type}`,
-                  "transition-fast inline-flex items-center gap-1.5 rounded-full border py-1 pr-3 pl-1 text-xs font-medium",
+                  "no-focus-ring transition-fast inline-flex items-center gap-1.5 rounded-full border py-1 pr-3 pl-1 text-xs font-medium",
                   isSelected
-                    ? "border-transparent text-primary-foreground"
-                    : "border-border text-foreground hover:border-border-strong"
+                    ? "border-transparent text-primary-foreground focus-visible:ring-2 focus-visible:ring-info focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+                    : "border-border text-foreground hover:border-border-strong focus-visible:border-border-strong"
                 )}
                 style={
                   isSelected ? { background: "var(--type-color)" } : undefined
@@ -325,7 +322,7 @@ export function PokemonExplorer({
             <button
               type="button"
               onClick={clearFilters}
-              className="ml-auto text-xs font-medium text-muted hover:text-foreground hover:underline"
+              className="no-focus-ring ml-auto text-xs font-medium text-muted hover:text-foreground hover:underline focus-visible:text-foreground focus-visible:underline"
             >
               Clear all
             </button>

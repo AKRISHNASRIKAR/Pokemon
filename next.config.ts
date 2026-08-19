@@ -9,6 +9,9 @@ const nextConfig: NextConfig = {
         pathname: "/PokeAPI/sprites/**",
       },
     ],
+    // 65 is the quality every image on the site actually requests — the
+    // thumbnail-sized artwork and logo don't need 75's extra bytes.
+    qualities: [65, 75],
   },
   // Ship debuggable stack traces for the large first-party chunks Lighthouse flagged.
   productionBrowserSourceMaps: true,

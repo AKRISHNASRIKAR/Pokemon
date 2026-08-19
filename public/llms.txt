@@ -1,0 +1,25 @@
+# Pokémon Explorer
+
+> A fast, modern Pokédex web app built on the public PokéAPI. Browse, search,
+> filter, and sort every Pokémon, view detailed stats and moves, and compare
+> any two Pokémon side by side.
+
+Pokémon Explorer is a client-rendered Next.js app. Every Pokémon's data
+(stats, types, abilities, moves, sprites) is fetched live from PokéAPI at
+https://pokeapi.co — this site does not host or modify that data.
+
+## Pages
+
+- [Home](https://pokemon-pipeline.vercel.app/): search, type filter, and sort
+  the full Pokédex.
+- [Pokémon detail](https://pokemon-pipeline.vercel.app/pikachu): replace the
+  last path segment with any Pokémon's name (e.g. `/charizard`, `/mewtwo`)
+  for its stats, abilities, and moves.
+- [Compare](https://pokemon-pipeline.vercel.app/compare): side-by-side stat
+  comparison for any two Pokémon.
+
+## Notes for agents
+
+- Pokémon names in URLs are lowercase, PokéAPI's own slug format (e.g.
+  `mr-mime`, `nidoran-f`).
+- There is no authentication and no write access — every route is read-only.
