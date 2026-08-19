@@ -2,7 +2,7 @@
 
 import { useRef, type ReactNode } from "react";
 import {
-  motion,
+  m,
   useMotionTemplate,
   useMotionValue,
   useReducedMotion,
@@ -52,7 +52,7 @@ export function TiltCard({ children, className }: TiltCardProps) {
   }
 
   return (
-    <motion.div
+    <m.div
       ref={ref}
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
@@ -64,11 +64,11 @@ export function TiltCard({ children, className }: TiltCardProps) {
       className={cn("relative", className)}
     >
       {children}
-      <motion.span
+      <m.span
         aria-hidden="true"
         style={{ background: glareBackground }}
         className="pointer-events-none absolute inset-0 rounded-[inherit] opacity-0 transition-opacity duration-300 group-hover:opacity-100"
       />
-    </motion.div>
+    </m.div>
   );
 }

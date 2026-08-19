@@ -1,3 +1,4 @@
+import { LazyMotion, domAnimation } from "framer-motion";
 import type { Pokemon } from "@/types/pokemon";
 import { PokemonCard } from "@/components/pokemon/PokemonCard";
 
@@ -10,10 +11,16 @@ interface PokemonGridProps {
 
 export function PokemonGrid({ pokemons }: PokemonGridProps) {
   return (
-    <div className={POKEMON_GRID_CLASSES}>
-      {pokemons.map((pokemon) => (
-        <PokemonCard key={pokemon.id} pokemon={pokemon} />
-      ))}
-    </div>
+    <LazyMotion features={domAnimation} strict>
+      <div className={POKEMON_GRID_CLASSES}>
+        {pokemons.map((pokemon, index) => (
+          <PokemonCard
+            key={pokemon.id}
+            pokemon={pokemon}
+            priority={index < 12}
+          />
+        ))}
+      </div>
+    </LazyMotion>
   );
 }

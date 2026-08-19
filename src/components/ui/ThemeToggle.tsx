@@ -1,6 +1,6 @@
 "use client";
 
-import { useSyncExternalStore } from "react";
+import { useRef, useSyncExternalStore } from "react";
 import { Moon, Sun } from "lucide-react";
 
 const STORAGE_KEY = "theme";
@@ -22,13 +22,49 @@ function getServerSnapshot() {
   return false;
 }
 
+const THEME_TRANSITION_CLASS = "theme-transition";
+
 export function ThemeToggle() {
   const isDark = useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
+  const pendingTransition = useRef<ViewTransition | null>(null);
 
   function toggleTheme() {
-    const next = !document.documentElement.classList.contains("dark");
-    document.documentElement.classList.toggle("dark", next);
-    localStorage.setItem(STORAGE_KEY, next ? "dark" : "light");
+    const root = document.documentElement;
+    const next = !root.classList.contains("dark");
+
+    function applyTheme() {
+      root.classList.toggle("dark", next);
+      localStorage.setItem(STORAGE_KEY, next ? "dark" : "light");
+    }
+
+    const prefersReducedMotion = window.matchMedia(
+      "(prefers-reduced-motion: reduce)"
+    ).matches;
+
+    // Let an in-flight fade finish on its own rather than starting an
+    // overlapping one — the browser would just abort the first anyway.
+    if (
+      !document.startViewTransition ||
+      prefersReducedMotion ||
+      pendingTransition.current
+    ) {
+      applyTheme();
+      return;
+    }
+
+    root.classList.add(THEME_TRANSITION_CLASS);
+    const transition = document.startViewTransition(applyTheme);
+    pendingTransition.current = transition;
+
+    // `ready` rejects (not `finished`) when the transition is skipped before
+    // it can begin — e.g. the DOM changes again mid-flight. The theme itself
+    // is already applied by the callback above either way, so just swallow it.
+    transition.ready.catch(() => {});
+
+    transition.finished.finally(() => {
+      pendingTransition.current = null;
+      root.classList.remove(THEME_TRANSITION_CLASS);
+    });
   }
 
   return (

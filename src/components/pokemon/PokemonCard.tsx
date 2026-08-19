@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import { Link } from "next-view-transitions";
-import { motion } from "framer-motion";
+import { m } from "framer-motion";
 import { ArrowUpRight, ImageOff } from "lucide-react";
 import type { Pokemon } from "@/types/pokemon";
 import { capitalize, formatPokemonId, getPokemonArtwork } from "@/lib/utils";
@@ -11,9 +11,11 @@ import { TiltCard } from "@/components/ui/TiltCard";
 
 interface PokemonCardProps {
   pokemon: Pokemon;
+  /** Marks the card as the page's LCP candidate so its artwork loads eagerly at high priority. */
+  priority?: boolean;
 }
 
-export function PokemonCard({ pokemon }: PokemonCardProps) {
+export function PokemonCard({ pokemon, priority = false }: PokemonCardProps) {
   const artwork = getPokemonArtwork(pokemon.sprites);
   const primaryType = pokemon.types[0]?.type.name ?? "normal";
   const href = `/pokemon/${pokemon.name}`;
@@ -25,7 +27,7 @@ export function PokemonCard({ pokemon }: PokemonCardProps) {
       aria-label={`View details for ${capitalize(pokemon.name)}`}
     >
       <TiltCard className="rounded-3xl">
-        <motion.article
+        <m.article
           whileHover={{ y: -4 }}
           transition={{ duration: 0.2, ease: "easeOut" }}
           className="transition-normal relative flex h-full flex-col gap-2 rounded-3xl border border-[var(--card-border)] bg-[var(--card-surface)] p-4 pt-5 shadow-sm group-hover:border-[var(--type-color)]/40 group-hover:bg-[var(--card-surface-hover)] group-hover:shadow-lg group-focus-visible:outline-2 group-focus-visible:outline-offset-2 group-focus-visible:outline-info"
@@ -54,7 +56,8 @@ export function PokemonCard({ pokemon }: PokemonCardProps) {
                 src={artwork}
                 alt={capitalize(pokemon.name)}
                 fill
-                sizes="(min-width: 1280px) 22vw, (min-width: 1024px) 28vw, (min-width: 640px) 40vw, 70vw"
+                sizes="(min-width: 1280px) 18vw, (min-width: 1024px) 23vw, (min-width: 640px) 33vw, 45vw"
+                priority={priority}
                 className="relative object-contain p-3 transition-normal group-hover:-translate-y-2 group-hover:scale-110"
               />
             ) : (
@@ -83,7 +86,7 @@ export function PokemonCard({ pokemon }: PokemonCardProps) {
               ))}
             </div>
           </div>
-        </motion.article>
+        </m.article>
       </TiltCard>
     </Link>
   );

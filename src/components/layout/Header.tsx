@@ -13,16 +13,17 @@ export function Header() {
 
         <Link
           href="/"
-          className="transition-fast flex items-center justify-center shrink-0 hover:opacity-80"
+          className="transition-fast flex shrink-0 items-center justify-center hover:opacity-80"
           aria-label="Pokémon Explorer home"
         >
           <Image
             src="/pokemon-logo.png"
             alt="Pokémon"
-            width={538}
-            height={198}
-            priority
-            className="h-14 w-auto drop-shadow-sm sm:h-16"
+            width={174}
+            height={64}
+            loading="eager"
+            fetchPriority="high"
+            className="h-11 w-auto drop-shadow-sm sm:h-12"
           />
         </Link>
 

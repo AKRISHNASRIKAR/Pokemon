@@ -1,5 +1,6 @@
 import type { PokemonTypeName } from "@/constants/pokemonTypes";
 import { capitalize, cn } from "@/lib/utils";
+import { TypeIcon } from "@/components/pokemon/TypeIcon";
 
 type TypeBadgeSize = "sm" | "md";
 type TypeBadgeVariant = "outline" | "solid";
@@ -16,13 +17,13 @@ interface TypeBadgeProps {
 }
 
 const SIZE_CLASSES: Record<TypeBadgeSize, string> = {
-  sm: "gap-1.5 px-2.5 py-0.5 text-xs",
-  md: "gap-2 px-3.5 py-1.5 text-sm",
+  sm: "gap-1.5 py-0.5 pr-2.5 pl-1 text-xs",
+  md: "gap-2 py-1 pr-3.5 pl-1.5 text-sm",
 };
 
-const DOT_SIZE_CLASSES: Record<TypeBadgeSize, string> = {
-  sm: "size-1.5",
-  md: "size-2",
+const ICON_SIZE: Record<TypeBadgeSize, number> = {
+  sm: 16,
+  md: 20,
 };
 
 const TONE_SURFACE_VAR: Record<TypeBadgeTone, string> = {
@@ -59,13 +60,7 @@ export function TypeBadge({
           : undefined
       }
     >
-      {variant === "outline" && (
-        <span
-          className={cn("rounded-full", DOT_SIZE_CLASSES[size])}
-          style={{ background: "var(--type-color)" }}
-          aria-hidden="true"
-        />
-      )}
+      <TypeIcon type={type} size={ICON_SIZE[size]} />
       {capitalize(type)}
     </span>
   );

@@ -10,6 +10,7 @@ import {
 import { PokemonCardSkeleton } from "@/components/ui/Skeleton";
 import { ErrorState } from "@/components/ui/ErrorState";
 import { Button } from "@/components/ui/Button";
+import { TypeIcon } from "@/components/pokemon/TypeIcon";
 import {
   getPokemon,
   getPokemonListWithDetails,
@@ -40,9 +41,12 @@ export function PokemonExplorer({
     null
   );
   const [showFilters, setShowFilters] = useState(false);
+  const [matchingNames, setMatchingNames] = useState<string[]>([]);
   const [searchResults, setSearchResults] = useState<Pokemon[]>([]);
   const [status, setStatus] = useState<"idle" | "loading" | "error">("idle");
-  const [totalMatches, setTotalMatches] = useState<number | null>(null);
+  const [searchLoadMoreStatus, setSearchLoadMoreStatus] = useState<
+    "idle" | "loading" | "error"
+  >("idle");
 
   const [browsedPokemons, setBrowsedPokemons] = useState(initialPokemons);
   const [loadMoreStatus, setLoadMoreStatus] = useState<
@@ -63,6 +67,7 @@ export function PokemonExplorer({
   const isFiltering = debouncedQuery !== "" || selectedType !== null;
   const pokemons = isFiltering ? searchResults : browsedPokemons;
   const hasMore = browsedPokemons.length < totalCount;
+  const hasMoreSearchResults = searchResults.length < matchingNames.length;
 
   async function loadMore() {
     setLoadMoreStatus("loading");
@@ -108,14 +113,14 @@ export function PokemonExplorer({
 
         if (requestId.current !== currentRequest) return;
 
-        const limited = candidates.slice(0, RESULTS_LIMIT);
-        const details = await Promise.all(limited.map((name) => getPokemon(name)));
+        const firstPage = candidates.slice(0, RESULTS_LIMIT);
+        const details = await Promise.all(firstPage.map((name) => getPokemon(name)));
 
         if (requestId.current !== currentRequest) return;
 
         details.sort((a, b) => a.id - b.id);
+        setMatchingNames(candidates);
         setSearchResults(details);
-        setTotalMatches(candidates.length);
         setStatus("idle");
       } catch {
         if (requestId.current === currentRequest) {
@@ -126,6 +131,30 @@ export function PokemonExplorer({
 
     run();
   }, [debouncedQuery, selectedType, allNames, isFiltering]);
+
+  async function loadMoreSearchResults() {
+    const currentRequest = requestId.current;
+    setSearchLoadMoreStatus("loading");
+
+    try {
+      const nextNames = matchingNames.slice(
+        searchResults.length,
+        searchResults.length + PAGE_SIZE
+      );
+      const next = await Promise.all(nextNames.map((name) => getPokemon(name)));
+
+      if (requestId.current !== currentRequest) return;
+
+      setSearchResults((current) =>
+        [...current, ...next].sort((a, b) => a.id - b.id)
+      );
+      setSearchLoadMoreStatus("idle");
+    } catch {
+      if (requestId.current === currentRequest) {
+        setSearchLoadMoreStatus("error");
+      }
+    }
+  }
 
   function toggleType(type: PokemonTypeName) {
     setSelectedType((current) => (current === type ? null : type));
@@ -151,7 +180,7 @@ export function PokemonExplorer({
             onChange={(event) => setQuery(event.target.value)}
             placeholder="Search Pokémon by name..."
             aria-label="Search Pokémon by name"
-            className="w-full rounded-xl border border-border bg-surface py-2.5 pr-9 pl-10 text-sm text-foreground placeholder:text-muted-foreground"
+            className="w-full rounded-full border border-border bg-surface py-2.5 pr-9 pl-10 text-sm text-foreground placeholder:text-muted-foreground"
           />
           {query && (
             <button
@@ -169,7 +198,7 @@ export function PokemonExplorer({
           onClick={() => setShowFilters((value) => !value)}
           aria-expanded={showFilters}
           className={cn(
-            "transition-fast inline-flex items-center justify-center gap-2 rounded-xl border px-4 py-2.5 text-sm font-medium",
+            "transition-fast inline-flex items-center justify-center gap-2 rounded-full border px-4 py-2.5 text-sm font-medium",
             selectedType
               ? "border-transparent bg-primary text-primary-foreground"
               : "border-border bg-surface text-foreground hover:border-border-strong"
@@ -177,12 +206,17 @@ export function PokemonExplorer({
         >
           <SlidersHorizontal className="size-4" aria-hidden="true" />
           Filters
-          {selectedType && <span>· {capitalize(selectedType)}</span>}
+          {selectedType && (
+            <span className="flex items-center gap-1.5">
+              <TypeIcon type={selectedType} size={16} />
+              {capitalize(selectedType)}
+            </span>
+          )}
         </button>
       </div>
 
       {showFilters && (
-        <div className="flex flex-wrap items-center gap-2 rounded-xl border border-border bg-surface p-4">
+        <div className="flex flex-wrap items-center gap-2 rounded-2xl border border-border bg-surface p-4">
           {POKEMON_TYPES.map((type) => {
             const isSelected = selectedType === type;
             return (
@@ -193,7 +227,7 @@ export function PokemonExplorer({
                 aria-pressed={isSelected}
                 className={cn(
                   `type-${type}`,
-                  "transition-fast inline-flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-xs font-medium",
+                  "transition-fast inline-flex items-center gap-1.5 rounded-full border py-1 pr-3 pl-1 text-xs font-medium",
                   isSelected
                     ? "border-transparent text-primary-foreground"
                     : "border-border text-foreground hover:border-border-strong"
@@ -202,13 +236,7 @@ export function PokemonExplorer({
                   isSelected ? { background: "var(--type-color)" } : undefined
                 }
               >
-                <span
-                  className="size-1.5 rounded-full"
-                  style={{
-                    background: isSelected ? "currentColor" : "var(--type-color)",
-                  }}
-                  aria-hidden="true"
-                />
+                <TypeIcon type={type} size={18} />
                 {capitalize(type)}
               </button>
             );
@@ -227,20 +255,6 @@ export function PokemonExplorer({
 
       {isFiltering ? (
         <>
-          {status === "idle" && totalMatches !== null && (
-            <p className="text-sm text-muted" role="status">
-              {totalMatches === 0
-                ? "No Pokémon matched your search."
-                : `Showing ${pokemons.length} of ${totalMatches} match${
-                    totalMatches === 1 ? "" : "es"
-                  }${
-                    totalMatches > RESULTS_LIMIT
-                      ? " — refine your search to narrow it down"
-                      : ""
-                  }.`}
-            </p>
-          )}
-
           {status === "error" && (
             <ErrorState
               title="Couldn't load these Pokémon"
@@ -257,7 +271,63 @@ export function PokemonExplorer({
           )}
 
           {status === "idle" && pokemons.length > 0 && (
-            <PokemonGrid pokemons={pokemons} />
+            <>
+              <PokemonGrid pokemons={pokemons} />
+
+              {searchLoadMoreStatus === "loading" && (
+                <div className={POKEMON_GRID_CLASSES} aria-hidden="true">
+                  {Array.from({ length: PAGE_SIZE }).map((_, index) => (
+                    <PokemonCardSkeleton key={index} />
+                  ))}
+                </div>
+              )}
+
+              {searchLoadMoreStatus === "error" && (
+                <div className="flex flex-col items-center gap-3 text-center">
+                  <p className="text-sm text-muted">
+                    Something went wrong while loading more Pokémon.
+                  </p>
+                  <Button
+                    variant="secondary"
+                    onClick={loadMoreSearchResults}
+                    className="gap-2 px-8 py-3"
+                  >
+                    <RefreshCw className="size-4" aria-hidden="true" />
+                    Try again
+                  </Button>
+                </div>
+              )}
+
+              {searchLoadMoreStatus !== "error" && hasMoreSearchResults && (
+                <div className="flex justify-center">
+                  <Button
+                    variant="gradient"
+                    onClick={loadMoreSearchResults}
+                    disabled={searchLoadMoreStatus === "loading"}
+                    className="gap-2 px-8 py-3"
+                  >
+                    {searchLoadMoreStatus === "loading" ? (
+                      <>
+                        <Loader2
+                          className="size-4 animate-spin"
+                          aria-hidden="true"
+                        />
+                        Loading...
+                      </>
+                    ) : (
+                      "Load More"
+                    )}
+                  </Button>
+                </div>
+              )}
+
+              {!hasMoreSearchResults && (
+                <p className="text-center text-sm text-muted">
+                  You&apos;ve found all {matchingNames.length.toLocaleString()}{" "}
+                  matching Pokémon.
+                </p>
+              )}
+            </>
           )}
 
           {status === "idle" && pokemons.length === 0 && (
@@ -298,7 +368,7 @@ export function PokemonExplorer({
           {loadMoreStatus !== "error" && hasMore && (
             <div className="flex justify-center">
               <Button
-                variant="secondary"
+                variant="gradient"
                 onClick={loadMore}
                 disabled={loadMoreStatus === "loading"}
                 className="gap-2 px-8 py-3"
