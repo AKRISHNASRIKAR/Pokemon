@@ -106,6 +106,20 @@ export async function getPokemonNamesByType(
   return data.pokemon.map((entry) => entry.pokemon.name);
 }
 
+/** Fetches a few other Pokémon that share the given one's primary type. */
+export async function getRelatedPokemon(
+  pokemon: Pokemon,
+  limit = 4
+): Promise<Pokemon[]> {
+  const primaryType = pokemon.types[0]?.type.name;
+  if (!primaryType) return [];
+
+  const names = await getPokemonNamesByType(primaryType);
+  const others = names.filter((name) => name !== pokemon.name).slice(0, limit);
+
+  return Promise.all(others.map((name) => getPokemon(name)));
+}
+
 interface RawPokemonSpecies {
   flavor_text_entries: { flavor_text: string; language: { name: string } }[];
   genera: { genus: string; language: { name: string } }[];

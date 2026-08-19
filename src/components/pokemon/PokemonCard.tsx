@@ -13,9 +13,15 @@ interface PokemonCardProps {
   pokemon: Pokemon;
   /** Marks the card as the page's LCP candidate so its artwork loads eagerly at high priority. */
   priority?: boolean;
+  /** Position in the grid, used to stagger the entrance fade-in. */
+  index?: number;
 }
 
-export function PokemonCard({ pokemon, priority = false }: PokemonCardProps) {
+export function PokemonCard({
+  pokemon,
+  priority = false,
+  index = 0,
+}: PokemonCardProps) {
   const artwork = getPokemonArtwork(pokemon.sprites);
   const primaryType = pokemon.types[0]?.type.name ?? "normal";
   const href = `/pokemon/${pokemon.name}`;
@@ -28,8 +34,14 @@ export function PokemonCard({ pokemon, priority = false }: PokemonCardProps) {
     >
       <TiltCard className="rounded-3xl">
         <m.article
-          whileHover={{ y: -4 }}
-          transition={{ duration: 0.2, ease: "easeOut" }}
+          initial={{ opacity: 0, y: 16 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{
+            duration: 0.4,
+            delay: Math.min(index * 0.04, 0.4),
+            ease: "easeOut",
+          }}
+          whileHover={{ y: -4, transition: { duration: 0.2, ease: "easeOut" } }}
           className="transition-normal relative flex h-full flex-col gap-2 rounded-3xl border border-[var(--card-border)] bg-[var(--card-surface)] p-4 pt-5 shadow-sm group-hover:border-[var(--type-color)]/40 group-hover:bg-[var(--card-surface-hover)] group-hover:shadow-lg group-focus-visible:outline-2 group-focus-visible:outline-offset-2 group-focus-visible:outline-info"
         >
           <div className="absolute top-4 left-4 z-10 text-xs font-medium text-[var(--card-muted)]">

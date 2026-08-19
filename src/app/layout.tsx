@@ -5,6 +5,7 @@ import { ViewTransitions } from "next-view-transitions";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { ViewTransitionErrorGuard } from "@/components/ui/ViewTransitionErrorGuard";
+import { ScrollRestoration } from "@/components/ui/ScrollRestoration";
 import "./globals.css";
 
 const THEME_INIT_SCRIPT = `(function(){try{var stored=localStorage.getItem("theme");var isDark=stored?stored==="dark":window.matchMedia("(prefers-color-scheme: dark)").matches;if(isDark)document.documentElement.classList.add("dark");}catch(e){}})();`;
@@ -38,6 +39,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
             {THEME_INIT_SCRIPT}
           </Script>
           <ViewTransitionErrorGuard />
+          <ScrollRestoration />
           <Header />
           <main className="flex-1">{children}</main>
           <Footer />

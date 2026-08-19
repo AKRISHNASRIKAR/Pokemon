@@ -1,4 +1,5 @@
 import { cn } from "@/lib/utils";
+import { POKEMON_GRID_CLASSES } from "@/components/pokemon/PokemonGrid";
 
 interface SkeletonProps {
   className?: string;
@@ -13,7 +14,6 @@ export function Skeleton({ className }: SkeletonProps) {
   );
 }
 
-/** Placeholder shaped like a PokemonCard, used while list data loads. */
 export function PokemonCardSkeleton() {
   return (
     <div className="flex flex-col gap-4 rounded-3xl border border-[var(--card-border)] bg-[var(--card-surface)] p-4 shadow-sm">
@@ -27,6 +27,20 @@ export function PokemonCardSkeleton() {
         <Skeleton className="h-6 w-16 rounded-full bg-white/10" />
         <Skeleton className="h-6 w-16 rounded-full bg-white/10" />
       </div>
+    </div>
+  );
+}
+
+interface PokemonGridSkeletonProps {
+  count?: number;
+}
+
+export function PokemonGridSkeleton({ count = 20 }: PokemonGridSkeletonProps) {
+  return (
+    <div className={POKEMON_GRID_CLASSES} aria-hidden="true">
+      {Array.from({ length: count }).map((_, index) => (
+        <PokemonCardSkeleton key={index} />
+      ))}
     </div>
   );
 }

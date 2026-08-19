@@ -1,14 +1,17 @@
 import Image from "next/image";
 import { Link } from "next-view-transitions";
-import { ArrowLeft, ImageOff } from "lucide-react";
+import { ArrowLeft, ImageOff, Ruler, Weight } from "lucide-react";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { Container } from "@/components/layout/Container";
 import { TypeBadge } from "@/components/pokemon/TypeBadge";
 import { StatBar } from "@/components/pokemon/StatBar";
+import { MovesList } from "@/components/pokemon/MovesList";
+import { PokemonGrid } from "@/components/pokemon/PokemonGrid";
 import {
   getPokemon,
   getPokemonSpecies,
+  getRelatedPokemon,
   PokemonNotFoundError,
 } from "@/services/pokemonApi";
 import {
@@ -49,9 +52,14 @@ export default async function PokemonPage({ params }: PokemonPageProps) {
     throw error;
   }
 
-  const species = await getPokemonSpecies(pokemon.id).catch(() => null);
+  const [species, relatedPokemon] = await Promise.all([
+    getPokemonSpecies(pokemon.id).catch(() => null),
+    getRelatedPokemon(pokemon).catch(() => []),
+  ]);
+
   const artwork = getPokemonArtwork(pokemon.sprites);
   const primaryType = pokemon.types[0]?.type.name ?? "normal";
+  const moveNames = pokemon.moves.map((entry) => entry.move.name).sort();
 
   return (
     <Container
@@ -67,24 +75,25 @@ export default async function PokemonPage({ params }: PokemonPageProps) {
 
       <div className="grid gap-8 md:grid-cols-2 md:items-center md:gap-12">
         <div
-          className="relative mx-auto aspect-square w-full max-w-sm overflow-hidden rounded-3xl"
-          style={{
-            background:
-              "color-mix(in srgb, var(--type-color) 14%, var(--surface-secondary))",
-            viewTransitionName: `pokemon-artwork-${pokemon.name}`,
-          }}
+          className="dot-grid relative mx-auto aspect-square w-full max-w-sm overflow-hidden rounded-3xl border border-[var(--card-border)] bg-[var(--card-surface)]"
+          style={{ viewTransitionName: `pokemon-artwork-${pokemon.name}` }}
         >
+          <div
+            aria-hidden="true"
+            className="absolute inset-8 rounded-full opacity-40 blur-3xl"
+            style={{ background: "var(--type-color)" }}
+          />
           {artwork ? (
             <Image
               src={artwork}
               alt={capitalize(pokemon.name)}
               fill
               sizes="(min-width: 768px) 40vw, 90vw"
-              className="object-contain p-8"
+              className="animate-float relative object-contain p-10 drop-shadow-2xl"
               priority
             />
           ) : (
-            <div className="flex h-full w-full items-center justify-center text-muted-foreground">
+            <div className="relative flex h-full w-full items-center justify-center text-[var(--card-muted)]">
               <ImageOff className="size-16" aria-hidden="true" />
             </div>
           )}
@@ -116,22 +125,34 @@ export default async function PokemonPage({ params }: PokemonPageProps) {
             </p>
           )}
 
-          <div className="mt-2 grid max-w-sm grid-cols-2 gap-4 rounded-2xl border border-border bg-surface p-5 shadow-sm">
-            <div>
-              <p className="text-xs font-medium tracking-wide text-muted-foreground uppercase">
-                Height
-              </p>
-              <p className="text-lg font-semibold text-foreground">
-                {(pokemon.height / 10).toFixed(1)} m
-              </p>
+          <div className="mt-2 grid max-w-sm grid-cols-2 gap-3">
+            <div className="flex items-center gap-3 rounded-2xl border border-border bg-surface p-4 shadow-sm">
+              <Ruler
+                className="size-5 text-[var(--type-color)]"
+                aria-hidden="true"
+              />
+              <div>
+                <p className="text-xs font-medium tracking-wide text-muted-foreground uppercase">
+                  Height
+                </p>
+                <p className="text-lg font-semibold text-foreground">
+                  {(pokemon.height / 10).toFixed(1)} m
+                </p>
+              </div>
             </div>
-            <div>
-              <p className="text-xs font-medium tracking-wide text-muted-foreground uppercase">
-                Weight
-              </p>
-              <p className="text-lg font-semibold text-foreground">
-                {(pokemon.weight / 10).toFixed(1)} kg
-              </p>
+            <div className="flex items-center gap-3 rounded-2xl border border-border bg-surface p-4 shadow-sm">
+              <Weight
+                className="size-5 text-[var(--type-color)]"
+                aria-hidden="true"
+              />
+              <div>
+                <p className="text-xs font-medium tracking-wide text-muted-foreground uppercase">
+                  Weight
+                </p>
+                <p className="text-lg font-semibold text-foreground">
+                  {(pokemon.weight / 10).toFixed(1)} kg
+                </p>
+              </div>
             </div>
           </div>
         </div>
@@ -176,6 +197,22 @@ export default async function PokemonPage({ params }: PokemonPageProps) {
           </ul>
         </section>
       </div>
+
+      {moveNames.length > 0 && (
+        <section className="flex flex-col gap-4 rounded-2xl border border-border bg-surface p-6 shadow-sm">
+          <h2 className="text-lg font-semibold text-foreground">Moves</h2>
+          <MovesList moves={moveNames} />
+        </section>
+      )}
+
+      {relatedPokemon.length > 0 && (
+        <section className="flex flex-col gap-4">
+          <h2 className="text-lg font-semibold text-foreground">
+            More {capitalize(primaryType)}-type Pokémon
+          </h2>
+          <PokemonGrid pokemons={relatedPokemon} />
+        </section>
+      )}
     </Container>
   );
 }

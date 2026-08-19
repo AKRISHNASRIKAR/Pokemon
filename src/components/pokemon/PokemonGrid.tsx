@@ -18,6 +18,7 @@ export function PokemonGrid({ pokemons }: PokemonGridProps) {
             key={pokemon.id}
             pokemon={pokemon}
             priority={index < 12}
+            index={index}
           />
         ))}
       </div>

@@ -38,6 +38,13 @@ export interface PokemonStat {
   };
 }
 
+export interface PokemonMove {
+  move: {
+    name: string;
+    url: string;
+  };
+}
+
 export interface PokemonSprites {
   front_default: string | null;
   other?: {
@@ -56,6 +63,7 @@ export interface Pokemon {
   types: PokemonType[];
   abilities: PokemonAbility[];
   stats: PokemonStat[];
+  moves: PokemonMove[];
 }
 
 export interface PokemonSpecies {

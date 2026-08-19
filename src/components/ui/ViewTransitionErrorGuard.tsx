@@ -3,28 +3,28 @@
 import { useEffect } from "react";
 
 /**
- * The View Transitions API can reject a transition's `finished` promise as
- * "aborted because of invalid state" when a navigation resolves faster than
- * the transition lifecycle expects — a known, documented edge case (see
- * next-view-transitions' README) that doesn't affect the actual navigation.
- * This silences only that specific, narrow case so it doesn't surface as an
- * unhandled rejection, without masking unrelated errors.
+ * `ViewTransition.ready` rejects whenever a transition is skipped or
+ * superseded before it can begin — a normal outcome (fast repeat navigation,
+ * the DOM changing mid-flight), not a bug. `next-view-transitions` calls
+ * `document.startViewTransition()` internally but never handles that
+ * rejection, so it surfaces as an unhandled promise rejection on every such
+ * navigation. Patching `startViewTransition` here, once, catches it at the
+ * source for every caller (this library included) without forking it.
  */
 export function ViewTransitionErrorGuard() {
   useEffect(() => {
-    function handleRejection(event: PromiseRejectionEvent) {
-      const reason = event.reason;
-      if (
-        reason instanceof DOMException &&
-        reason.name === "InvalidStateError" &&
-        reason.message.toLowerCase().includes("transition")
-      ) {
-        event.preventDefault();
-      }
-    }
+    if (!("startViewTransition" in document)) return;
 
-    window.addEventListener("unhandledrejection", handleRejection);
-    return () => window.removeEventListener("unhandledrejection", handleRejection);
+    const native = document.startViewTransition.bind(document);
+    document.startViewTransition = (...args: Parameters<typeof native>) => {
+      const transition = native(...args);
+      transition.ready.catch(() => {});
+      return transition;
+    };
+
+    return () => {
+      document.startViewTransition = native;
+    };
   }, []);
 
   return null;

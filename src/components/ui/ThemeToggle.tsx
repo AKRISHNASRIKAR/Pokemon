@@ -56,11 +56,6 @@ export function ThemeToggle() {
     const transition = document.startViewTransition(applyTheme);
     pendingTransition.current = transition;
 
-    // `ready` rejects (not `finished`) when the transition is skipped before
-    // it can begin — e.g. the DOM changes again mid-flight. The theme itself
-    // is already applied by the callback above either way, so just swallow it.
-    transition.ready.catch(() => {});
-
     transition.finished.finally(() => {
       pendingTransition.current = null;
       root.classList.remove(THEME_TRANSITION_CLASS);

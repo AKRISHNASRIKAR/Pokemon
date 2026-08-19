@@ -302,6 +302,47 @@ button:not(:disabled),
 }
 
 /* ==========================================================================
+   Pokémon detail page — stat bar fill and artwork float animations
+   ========================================================================== */
+
+@keyframes stat-bar-fill {
+  from {
+    width: 0%;
+  }
+  to {
+    width: var(--stat-percent);
+  }
+}
+
+.stat-bar-fill {
+  width: var(--stat-percent);
+  animation: stat-bar-fill 900ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes pokemon-float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-14px);
+  }
+}
+
+.animate-float {
+  animation: pokemon-float 5s ease-in-out infinite;
+}
+
+.dot-grid {
+  background-image: radial-gradient(
+    circle,
+    rgb(255 255 255 / 0.08) 1px,
+    transparent 1px
+  );
+  background-size: 20px 20px;
+}
+
+/* ==========================================================================
    View transitions — morphs a Pokémon's artwork/name from the grid card
    into its detail page hero when the browser supports the native API.
    ========================================================================== */

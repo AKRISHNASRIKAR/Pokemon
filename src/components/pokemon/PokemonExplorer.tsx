@@ -1,13 +1,16 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { Loader2, RefreshCw, Search, SlidersHorizontal, X } from "lucide-react";
-import { POKEMON_TYPES, type PokemonTypeName } from "@/constants/pokemonTypes";
 import {
-  POKEMON_GRID_CLASSES,
-  PokemonGrid,
-} from "@/components/pokemon/PokemonGrid";
-import { PokemonCardSkeleton } from "@/components/ui/Skeleton";
+  isPokemonTypeName,
+  POKEMON_TYPES,
+  type PokemonTypeName,
+} from "@/constants/pokemonTypes";
+import { PokemonGrid } from "@/components/pokemon/PokemonGrid";
+import { SortSelect } from "@/components/pokemon/SortSelect";
+import { PokemonGridSkeleton } from "@/components/ui/Skeleton";
 import { ErrorState } from "@/components/ui/ErrorState";
 import { Button } from "@/components/ui/Button";
 import { TypeIcon } from "@/components/pokemon/TypeIcon";
@@ -16,6 +19,7 @@ import {
   getPokemonListWithDetails,
   getPokemonNamesByType,
 } from "@/services/pokemonApi";
+import { isSortKey, sortPokemons, type SortKey } from "@/lib/sortPokemons";
 import { capitalize, cn } from "@/lib/utils";
 import type { Pokemon } from "@/types/pokemon";
 
@@ -35,12 +39,24 @@ export function PokemonExplorer({
   allNames,
   totalCount,
 }: PokemonExplorerProps) {
-  const [query, setQuery] = useState("");
-  const [debouncedQuery, setDebouncedQuery] = useState("");
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+
+  const initialQuery = searchParams.get("q") ?? "";
+  const initialType = searchParams.get("type");
+  const initialSort = searchParams.get("sort");
+
+  const [query, setQuery] = useState(initialQuery);
+  const [debouncedQuery, setDebouncedQuery] = useState(initialQuery);
   const [selectedType, setSelectedType] = useState<PokemonTypeName | null>(
-    null
+    initialType && isPokemonTypeName(initialType) ? initialType : null
+  );
+  const [sort, setSort] = useState<SortKey>(
+    initialSort && isSortKey(initialSort) ? initialSort : "id"
   );
   const [showFilters, setShowFilters] = useState(false);
+
   const [matchingNames, setMatchingNames] = useState<string[]>([]);
   const [searchResults, setSearchResults] = useState<Pokemon[]>([]);
   const [status, setStatus] = useState<"idle" | "loading" | "error">("idle");
@@ -53,6 +69,7 @@ export function PokemonExplorer({
     "idle" | "loading" | "error"
   >("idle");
 
+  const searchInputRef = useRef<HTMLInputElement>(null);
   const typeCache = useRef(new Map<PokemonTypeName, string[]>());
   const requestId = useRef(0);
 
@@ -64,8 +81,54 @@ export function PokemonExplorer({
     return () => clearTimeout(timeout);
   }, [query]);
 
+  useEffect(() => {
+    const params = new URLSearchParams();
+    if (debouncedQuery) params.set("q", debouncedQuery);
+    if (selectedType) params.set("type", selectedType);
+    if (sort !== "id") params.set("sort", sort);
+
+    const queryString = params.toString();
+    router.replace(queryString ? `${pathname}?${queryString}` : pathname, {
+      scroll: false,
+    });
+  }, [debouncedQuery, selectedType, sort, pathname, router]);
+
+  useEffect(() => {
+    function focusSearchOnSlash(event: KeyboardEvent) {
+      if (event.key !== "/" || event.metaKey || event.ctrlKey || event.altKey) {
+        return;
+      }
+
+      const target = event.target as HTMLElement;
+      const isAlreadyTyping =
+        target.tagName === "INPUT" ||
+        target.tagName === "TEXTAREA" ||
+        target.isContentEditable;
+      if (isAlreadyTyping) return;
+
+      event.preventDefault();
+      searchInputRef.current?.focus();
+    }
+
+    document.addEventListener("keydown", focusSearchOnSlash);
+    return () => document.removeEventListener("keydown", focusSearchOnSlash);
+  }, []);
+
+  function handleSearchKeyDown(event: React.KeyboardEvent<HTMLInputElement>) {
+    if (event.key !== "Escape") return;
+    if (query) {
+      setQuery("");
+    } else {
+      event.currentTarget.blur();
+    }
+  }
+
   const isFiltering = debouncedQuery !== "" || selectedType !== null;
   const pokemons = isFiltering ? searchResults : browsedPokemons;
+  const sortedPokemons = useMemo(
+    () => sortPokemons(pokemons, sort),
+    [pokemons, sort]
+  );
   const hasMore = browsedPokemons.length < totalCount;
   const hasMoreSearchResults = searchResults.length < matchingNames.length;
 
@@ -175,14 +238,16 @@ export function PokemonExplorer({
             aria-hidden="true"
           />
           <input
+            ref={searchInputRef}
             type="text"
             value={query}
             onChange={(event) => setQuery(event.target.value)}
+            onKeyDown={handleSearchKeyDown}
             placeholder="Search Pokémon by name..."
             aria-label="Search Pokémon by name"
             className="w-full rounded-full border border-border bg-surface py-2.5 pr-9 pl-10 text-sm text-foreground placeholder:text-muted-foreground"
           />
-          {query && (
+          {query ? (
             <button
               type="button"
               onClick={() => setQuery("")}
@@ -191,28 +256,37 @@ export function PokemonExplorer({
             >
               <X className="size-4" aria-hidden="true" />
             </button>
+          ) : (
+            <kbd className="pointer-events-none absolute top-1/2 right-3 hidden -translate-y-1/2 rounded-md border border-border bg-surface-secondary px-1.5 py-0.5 text-xs font-medium text-muted-foreground sm:block">
+              /
+            </kbd>
           )}
         </div>
-        <button
-          type="button"
-          onClick={() => setShowFilters((value) => !value)}
-          aria-expanded={showFilters}
-          className={cn(
-            "transition-fast inline-flex items-center justify-center gap-2 rounded-full border px-4 py-2.5 text-sm font-medium",
-            selectedType
-              ? "border-transparent bg-primary text-primary-foreground"
-              : "border-border bg-surface text-foreground hover:border-border-strong"
-          )}
-        >
-          <SlidersHorizontal className="size-4" aria-hidden="true" />
-          Filters
-          {selectedType && (
-            <span className="flex items-center gap-1.5">
-              <TypeIcon type={selectedType} size={16} />
-              {capitalize(selectedType)}
-            </span>
-          )}
-        </button>
+
+        <div className="flex gap-3">
+          <button
+            type="button"
+            onClick={() => setShowFilters((value) => !value)}
+            aria-expanded={showFilters}
+            className={cn(
+              "transition-fast inline-flex items-center justify-center gap-2 rounded-full border px-4 py-2.5 text-sm font-medium",
+              selectedType
+                ? "border-transparent bg-primary text-primary-foreground"
+                : "border-border bg-surface text-foreground hover:border-border-strong"
+            )}
+          >
+            <SlidersHorizontal className="size-4" aria-hidden="true" />
+            Filters
+            {selectedType && (
+              <span className="flex items-center gap-1.5">
+                <TypeIcon type={selectedType} size={16} />
+                {capitalize(selectedType)}
+              </span>
+            )}
+          </button>
+
+          <SortSelect value={sort} onChange={setSort} />
+        </div>
       </div>
 
       {showFilters && (
@@ -262,24 +336,14 @@ export function PokemonExplorer({
             />
           )}
 
-          {status === "loading" && (
-            <div className={POKEMON_GRID_CLASSES} aria-hidden="true">
-              {Array.from({ length: SKELETON_COUNT }).map((_, index) => (
-                <PokemonCardSkeleton key={index} />
-              ))}
-            </div>
-          )}
+          {status === "loading" && <PokemonGridSkeleton count={SKELETON_COUNT} />}
 
-          {status === "idle" && pokemons.length > 0 && (
+          {status === "idle" && sortedPokemons.length > 0 && (
             <>
-              <PokemonGrid pokemons={pokemons} />
+              <PokemonGrid pokemons={sortedPokemons} />
 
               {searchLoadMoreStatus === "loading" && (
-                <div className={POKEMON_GRID_CLASSES} aria-hidden="true">
-                  {Array.from({ length: PAGE_SIZE }).map((_, index) => (
-                    <PokemonCardSkeleton key={index} />
-                  ))}
-                </div>
+                <PokemonGridSkeleton count={PAGE_SIZE} />
               )}
 
               {searchLoadMoreStatus === "error" && (
@@ -330,7 +394,7 @@ export function PokemonExplorer({
             </>
           )}
 
-          {status === "idle" && pokemons.length === 0 && (
+          {status === "idle" && sortedPokemons.length === 0 && (
             <ErrorState
               title="No Pokémon found"
               message="Try a different name or clear your filters."
@@ -339,15 +403,9 @@ export function PokemonExplorer({
         </>
       ) : (
         <>
-          <PokemonGrid pokemons={pokemons} />
+          <PokemonGrid pokemons={sortedPokemons} />
 
-          {loadMoreStatus === "loading" && (
-            <div className={POKEMON_GRID_CLASSES} aria-hidden="true">
-              {Array.from({ length: PAGE_SIZE }).map((_, index) => (
-                <PokemonCardSkeleton key={index} />
-              ))}
-            </div>
-          )}
+          {loadMoreStatus === "loading" && <PokemonGridSkeleton count={PAGE_SIZE} />}
 
           {loadMoreStatus === "error" && (
             <div className="flex flex-col items-center gap-3 text-center">

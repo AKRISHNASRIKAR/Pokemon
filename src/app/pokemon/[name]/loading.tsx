@@ -17,7 +17,10 @@ export default function PokemonDetailLoading() {
             <Skeleton className="h-8 w-20 rounded-full" />
             <Skeleton className="h-8 w-20 rounded-full" />
           </div>
-          <Skeleton className="h-16 w-full max-w-sm rounded-2xl" />
+          <div className="grid max-w-sm grid-cols-2 gap-3">
+            <Skeleton className="h-16 rounded-2xl" />
+            <Skeleton className="h-16 rounded-2xl" />
+          </div>
         </div>
       </div>
 
@@ -25,6 +28,8 @@ export default function PokemonDetailLoading() {
         <Skeleton className="h-64 rounded-2xl" />
         <Skeleton className="h-64 rounded-2xl" />
       </div>
+
+      <Skeleton className="h-40 rounded-2xl" />
     </Container>
   );
 }
