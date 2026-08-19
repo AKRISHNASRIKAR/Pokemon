@@ -24,7 +24,7 @@ export function PokemonCard({
 }: PokemonCardProps) {
   const artwork = getPokemonArtwork(pokemon.sprites);
   const primaryType = pokemon.types[0]?.type.name ?? "normal";
-  const href = `/pokemon/${pokemon.name}`;
+  const href = `/${pokemon.name}`;
 
   return (
     <Link

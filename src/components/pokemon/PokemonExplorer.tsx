@@ -245,7 +245,7 @@ export function PokemonExplorer({
             onKeyDown={handleSearchKeyDown}
             placeholder="Search Pokémon by name..."
             aria-label="Search Pokémon by name"
-            className="w-full rounded-full border border-border bg-surface py-2.5 pr-9 pl-10 text-sm text-foreground placeholder:text-muted-foreground"
+            className="w-full rounded-full border border-border bg-surface py-2.5 pr-9 pl-10 text-sm text-foreground placeholder:text-muted-foreground focus:border-border-strong focus:outline-none"
           />
           {query ? (
             <button
