@@ -6,7 +6,7 @@ import { ThemeToggle } from "@/components/ui/ThemeToggle";
 export function Header() {
   return (
     <header className="sticky top-0 z-40 px-3 pt-3 sm:px-4">
-      <Container className="flex h-24 items-center justify-between rounded-2xl border border-border bg-surface/90 px-4 shadow-sm backdrop-blur-md sm:px-6">
+      <Container className="flex h-24 items-center justify-between rounded-2xl border border-white/10 bg-surface/40 px-4 shadow-[0_4px_30px_rgba(0,0,0,0.1)] backdrop-blur-xl backdrop-saturate-150 sm:px-6">
         <div className="flex flex-1 items-center">
           <span className="sr-only">Pokémon Explorer</span>
         </div>

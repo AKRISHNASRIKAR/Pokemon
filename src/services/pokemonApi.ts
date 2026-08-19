@@ -22,10 +22,7 @@ class PokemonApiError extends Error {
   }
 }
 
-/**
- * Fetches a page of Pokémon list entries. Each entry only contains
- * `name` and `url` — use `getPokemon` to load full details.
- */
+/** Fetch a page of Pokémon list entries. */
 export async function getPokemonList(
   limit = 20,
   offset = 0
@@ -44,7 +41,7 @@ export async function getPokemonList(
   return response.json() as Promise<PokemonListResponse>;
 }
 
-/** Fetches full details for a single Pokémon by name or numeric id. */
+/** Fetch details for a single Pokémon. */
 export async function getPokemon(nameOrId: string | number): Promise<Pokemon> {
   const response = await fetch(
     `${BASE_URL}/pokemon/${String(nameOrId).toLowerCase()}`
@@ -64,10 +61,7 @@ export async function getPokemon(nameOrId: string | number): Promise<Pokemon> {
   return response.json() as Promise<Pokemon>;
 }
 
-/**
- * Fetches a page of Pokémon with full details, resolved for the caller so
- * the UI never needs to know the list endpoint is name/url only.
- */
+/** Fetch a page of Pokémon with full details. */
 export async function getPokemonListWithDetails(
   limit = 20,
   offset = 0
@@ -76,10 +70,7 @@ export async function getPokemonListWithDetails(
   return Promise.all(list.results.map((item) => getPokemon(item.name)));
 }
 
-/**
- * Fetches the full name/url catalog for every Pokémon in one request, used
- * to power instant client-side name search without loading every detail.
- */
+/** Fetch all Pokémon names. */
 export async function getAllPokemonNames(): Promise<PokemonListItem[]> {
   const list = await getPokemonList(20000, 0);
   return list.results;
@@ -89,7 +80,7 @@ interface RawPokemonTypeDetail {
   pokemon: { pokemon: { name: string; url: string } }[];
 }
 
-/** Fetches every Pokémon name belonging to a given type. */
+/** Fetch Pokémon names by type. */
 export async function getPokemonNamesByType(
   type: PokemonTypeName
 ): Promise<string[]> {
@@ -106,7 +97,7 @@ export async function getPokemonNamesByType(
   return data.pokemon.map((entry) => entry.pokemon.name);
 }
 
-/** Fetches a few other Pokémon that share the given one's primary type. */
+/** Fetch related Pokémon. */
 export async function getRelatedPokemon(
   pokemon: Pokemon,
   limit = 4
@@ -125,7 +116,7 @@ interface RawPokemonSpecies {
   genera: { genus: string; language: { name: string } }[];
 }
 
-/** Fetches supplementary species data (flavor text, genus) for a Pokémon. */
+/** Fetch species data. */
 export async function getPokemonSpecies(
   id: number
 ): Promise<PokemonSpecies> {

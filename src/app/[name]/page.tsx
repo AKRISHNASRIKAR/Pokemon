@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { Link } from "next-view-transitions";
+import Link from "next/link";
 import { ArrowLeft, ImageOff, Ruler, Weight } from "lucide-react";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
@@ -74,10 +74,7 @@ export default async function PokemonPage({ params }: PokemonPageProps) {
       </Link>
 
       <div className="grid gap-8 md:grid-cols-2 md:items-center md:gap-12">
-        <div
-          className="dot-grid relative mx-auto aspect-square w-full max-w-sm overflow-hidden rounded-3xl border border-[var(--card-border)] bg-[var(--card-surface)]"
-          style={{ viewTransitionName: `pokemon-artwork-${pokemon.name}` }}
-        >
+        <div className="dot-grid relative mx-auto aspect-square w-full max-w-sm overflow-hidden rounded-3xl border border-[var(--card-border)] bg-[var(--card-surface)]">
           <div
             aria-hidden="true"
             className="absolute inset-8 rounded-full opacity-40 blur-3xl"
@@ -103,10 +100,7 @@ export default async function PokemonPage({ params }: PokemonPageProps) {
           <span className="text-sm font-medium text-muted-foreground">
             {formatPokemonId(pokemon.id)}
           </span>
-          <h1
-            style={{ viewTransitionName: `pokemon-name-${pokemon.name}` }}
-            className="text-4xl font-semibold tracking-tight text-foreground md:text-5xl"
-          >
+          <h1 className="text-4xl font-semibold tracking-tight text-foreground md:text-5xl">
             {capitalize(pokemon.name)}
           </h1>
           {species?.genus && (

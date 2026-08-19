@@ -18,7 +18,7 @@ interface TiltCardProps {
 
 const SPRING = { stiffness: 300, damping: 25, mass: 0.5 };
 
-/** Wraps children in a mouse-tracked 3D tilt with a cursor-following glare. */
+/** 3D tilt card wrapper. */
 export function TiltCard({ children, className }: TiltCardProps) {
   const ref = useRef<HTMLDivElement>(null);
   const prefersReducedMotion = useReducedMotion();

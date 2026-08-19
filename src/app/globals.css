@@ -8,14 +8,14 @@
   --container-max-width: 1400px;
   --page-padding: 1.25rem;
 
-  --background: #f8f9fb;
+  --background: #e9eaee;
   --foreground: #17181c;
 
-  --surface: #ffffff;
-  --surface-secondary: #f1f3f6;
+  --surface: #f5f5f7;
+  --surface-secondary: #dfe1e6;
 
-  --border: #e5e7eb;
-  --border-strong: #d1d5db;
+  --border: #dcdee3;
+  --border-strong: #c7cad1;
 
   --muted: #6b7280;
   --muted-foreground: #9ca3af;
@@ -55,10 +55,11 @@
 
   /* Pokémon cards stay charcoal-dark in both themes (so artwork glows
      consistently) but still shift a shade between light/dark, like the
-     rest of the UI — see the .dark override below. */
-  --card-surface: #1e2530;
-  --card-surface-hover: #262e3b;
-  --card-border: #313a48;
+     rest of the UI — see the .dark override below. Lighter here than in
+     dark mode so the card doesn't punch a hole through the light page. */
+  --card-surface: #2b3340;
+  --card-surface-hover: #333c4b;
+  --card-border: #3d4757;
   --card-foreground: #f5f6f8;
   --card-muted: #9aa1b0;
 
@@ -344,14 +345,8 @@ select:not(:disabled),
 }
 
 /* ==========================================================================
-   View transitions — morphs a Pokémon's artwork/name from the grid card
-   into its detail page hero when the browser supports the native API.
+   Theme toggle — a slow, dimmed crossfade instead of the instant class swap.
    ========================================================================== */
-
-::view-transition-group(*) {
-  animation-duration: 420ms;
-  animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
-}
 
 @media (prefers-reduced-motion: reduce) {
   ::view-transition-group(*),
@@ -360,12 +355,6 @@ select:not(:disabled),
     animation: none !important;
   }
 }
-
-/* ==========================================================================
-   Theme toggle — a slow, dimmed crossfade instead of the instant class swap,
-   scoped to its own transition name so it doesn't inherit the snappier
-   card-morph easing above.
-   ========================================================================== */
 
 @keyframes theme-fade-out {
   from {

@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { Link } from "next-view-transitions";
+import Link from "next/link";
 import { m } from "framer-motion";
 import { ArrowUpRight, ImageOff } from "lucide-react";
 import type { Pokemon } from "@/types/pokemon";
@@ -11,9 +11,9 @@ import { TiltCard } from "@/components/ui/TiltCard";
 
 interface PokemonCardProps {
   pokemon: Pokemon;
-  /** Marks the card as the page's LCP candidate so its artwork loads eagerly at high priority. */
+  /** LCP candidate flag. */
   priority?: boolean;
-  /** Position in the grid, used to stagger the entrance fade-in. */
+  /** Grid position index. */
   index?: number;
 }
 
@@ -53,10 +53,7 @@ export function PokemonCard({
 
           <div
             className="relative z-0 mx-auto -mt-10 flex aspect-square w-4/5 items-center justify-center"
-            style={{
-              transform: "translateZ(56px)",
-              viewTransitionName: `pokemon-artwork-${pokemon.name}`,
-            }}
+            style={{ transform: "translateZ(56px)" }}
           >
             <span
               aria-hidden="true"
@@ -81,10 +78,7 @@ export function PokemonCard({
 
           <div className="mt-auto flex flex-col gap-2 pt-1">
             <div className="flex items-center justify-center gap-1">
-              <h3
-                style={{ viewTransitionName: `pokemon-name-${pokemon.name}` }}
-                className="truncate text-base font-semibold text-[var(--card-foreground)] group-hover:underline"
-              >
+              <h3 className="truncate text-base font-semibold text-[var(--card-foreground)] group-hover:underline">
                 {capitalize(pokemon.name)}
               </h3>
               <ArrowUpRight

@@ -6,7 +6,7 @@ interface SortSelectProps {
   onChange: (value: SortKey) => void;
 }
 
-/** Native <select> so sorting stays fully keyboard and screen-reader accessible. */
+/** Accessible native select. */
 export function SortSelect({ value, onChange }: SortSelectProps) {
   return (
     <div className="relative">
@@ -18,7 +18,7 @@ export function SortSelect({ value, onChange }: SortSelectProps) {
         value={value}
         onChange={(event) => onChange(event.target.value as SortKey)}
         aria-label="Sort Pokémon by"
-        className="transition-fast h-full w-full appearance-none rounded-full border border-border bg-surface py-2.5 pr-4 pl-10 text-sm font-medium text-foreground hover:border-border-strong"
+        className="transition-fast h-full w-full cursor-pointer appearance-none rounded-full border border-border bg-surface py-2.5 pr-4 pl-10 text-sm font-medium text-foreground hover:border-border-strong"
       >
         {SORT_OPTIONS.map((option) => (
           <option key={option.value} value={option.value}>

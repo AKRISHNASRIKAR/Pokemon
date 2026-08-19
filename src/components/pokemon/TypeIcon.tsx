@@ -49,7 +49,7 @@ interface TypeIconProps {
   className?: string;
 }
 
-/** A type's icon glyph on a filled circle of its own --type-color. */
+/** Type icon glyph. */
 export function TypeIcon({ type, size = 18, className }: TypeIconProps) {
   const Icon = TYPE_ICONS[type];
   const glyphSize = Math.round(size * 0.6);

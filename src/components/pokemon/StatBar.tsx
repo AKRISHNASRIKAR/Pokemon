@@ -6,7 +6,7 @@ interface StatBarProps {
   max?: number;
 }
 
-/** Horizontal bar for a single base stat, tinted via the ancestor's --type-color. */
+/** Stat progress bar. */
 export function StatBar({ label, value, max = 255 }: StatBarProps) {
   const percent = Math.min(100, Math.round((value / max) * 100));
 

@@ -4,8 +4,7 @@ import { TypeIcon } from "@/components/pokemon/TypeIcon";
 
 type TypeBadgeSize = "sm" | "md";
 type TypeBadgeVariant = "outline" | "solid";
-/** "default" follows the page's light/dark theme; "onDark" is for the
- * always-dark PokemonCard surface, which doesn't flip with the theme toggle. */
+/** Badge theme tone. */
 type TypeBadgeTone = "default" | "onDark";
 
 interface TypeBadgeProps {
@@ -31,7 +30,7 @@ const TONE_SURFACE_VAR: Record<TypeBadgeTone, string> = {
   onDark: "var(--card-surface)",
 };
 
-/** Read-only Pokémon type pill, colored via the shared --type-color system. */
+/** Type badge pill. */
 export function TypeBadge({
   type,
   size = "sm",

@@ -88,9 +88,15 @@ export function PokemonExplorer({
     if (sort !== "id") params.set("sort", sort);
 
     const queryString = params.toString();
-    router.replace(queryString ? `${pathname}?${queryString}` : pathname, {
-      scroll: false,
-    });
+    const nextSearch = queryString ? `?${queryString}` : "";
+
+    // Skip the replace when the URL already matches — otherwise this fires
+    // a real navigation on every mount (including landing back on this page
+    // from the detail route), which resets scroll and re-renders the route
+    // for no reason.
+    if (nextSearch === window.location.search) return;
+
+    router.replace(`${pathname}${nextSearch}`, { scroll: false });
   }, [debouncedQuery, selectedType, sort, pathname, router]);
 
   useEffect(() => {

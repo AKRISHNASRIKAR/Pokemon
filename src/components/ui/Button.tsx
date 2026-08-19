@@ -6,7 +6,7 @@ type ButtonVariant = "primary" | "secondary" | "ghost" | "gradient";
 
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: ButtonVariant;
-  /** Renders the button as a navigation link instead of a <button>. */
+  /** Render as link. */
   href?: string;
 }
 

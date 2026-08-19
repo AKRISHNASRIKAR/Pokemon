@@ -6,7 +6,7 @@ interface ContainerProps {
   className?: string;
 }
 
-/** Standard responsive max-width and horizontal padding for page content. */
+/** Standard page container. */
 export function Container({ children, className }: ContainerProps) {
   return <div className={cn("container", className)}>{children}</div>;
 }
