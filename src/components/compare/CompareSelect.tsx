@@ -68,7 +68,7 @@ export function CompareSelect({
 
   return (
     <div ref={containerRef} className="relative w-full max-w-xs">
-      <label className="mb-2 block text-xs font-medium tracking-wide text-muted-foreground uppercase">
+      <label className="mb-2 block text-xs font-medium tracking-wide text-muted uppercase">
         {label}
       </label>
 

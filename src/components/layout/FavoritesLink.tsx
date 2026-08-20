@@ -15,7 +15,7 @@ export function FavoritesLink() {
     <Link
       href="/favorites"
       aria-label="View favorites"
-      className="transition-fast inline-flex size-10 items-center justify-center rounded-full border border-border text-foreground hover:bg-surface-secondary text-[#f43f5e] hover:text-[#e11d48]"
+      className="transition-fast inline-flex size-10 items-center justify-center rounded-full border border-border text-foreground hover:bg-surface-secondary text-[#ef4444] hover:text-[#dc2626]"
     >
       <Heart className="size-4 fill-current" aria-hidden="true" />
     </Link>

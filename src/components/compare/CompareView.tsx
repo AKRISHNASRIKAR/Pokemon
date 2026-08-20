@@ -13,20 +13,31 @@ import { ErrorState } from "@/components/ui/ErrorState";
 
 interface CompareViewProps {
   allNames: string[];
+  /** Server-fetched, so the initial `?a=&b=` picks render (and their
+   *  artwork is discoverable) on first paint instead of after a client
+   *  fetch, avoiding both a layout shift and a delayed LCP. */
+  initialPokemonA: Pokemon | null;
+  initialPokemonB: Pokemon | null;
 }
 
-function useComparedPokemon(name: string | null) {
-  const [pokemon, setPokemon] = useState<Pokemon | null>(null);
+function useComparedPokemon(name: string | null, initial: Pokemon | null) {
+  const [pokemon, setPokemon] = useState<Pokemon | null>(
+    initial && initial.name === name ? initial : null
+  );
   const [errorName, setErrorName] = useState<string | null>(null);
+  const loadedNameRef = useRef<string | null>(
+    initial && initial.name === name ? name : null
+  );
 
   useEffect(() => {
-    if (!name) return;
+    if (!name || loadedNameRef.current === name) return;
 
     let cancelled = false;
 
     getPokemon(name)
       .then((data) => {
         if (cancelled) return;
+        loadedNameRef.current = name;
         setPokemon(data);
       })
       .catch(() => {
@@ -51,7 +62,11 @@ function useComparedPokemon(name: string | null) {
   return { pokemon: null, status: "loading" as const };
 }
 
-export function CompareView({ allNames }: CompareViewProps) {
+export function CompareView({
+  allNames,
+  initialPokemonA,
+  initialPokemonB,
+}: CompareViewProps) {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -60,10 +75,12 @@ export function CompareView({ allNames }: CompareViewProps) {
   const [nameB, setNameB] = useState(searchParams.get("b") ?? "");
 
   const { pokemon: pokemonA, status: statusA } = useComparedPokemon(
-    nameA || null
+    nameA || null,
+    initialPokemonA
   );
   const { pokemon: pokemonB, status: statusB } = useComparedPokemon(
-    nameB || null
+    nameB || null,
+    initialPokemonB
   );
 
   const initialSync = useRef(true);
@@ -137,6 +154,7 @@ export function CompareView({ allNames }: CompareViewProps) {
             <ComparePanel
               pokemon={pokemonA}
               isWinner={bstA > bstB}
+              priority
             />
             <span
               aria-hidden="true"
@@ -147,6 +165,7 @@ export function CompareView({ allNames }: CompareViewProps) {
             <ComparePanel
               pokemon={pokemonB}
               isWinner={bstB > bstA}
+              priority
             />
           </div>
 

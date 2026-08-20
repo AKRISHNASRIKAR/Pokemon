@@ -1,8 +1,8 @@
-import Image from "next/image";
 import Link from "next/link";
 import { Container } from "@/components/layout/Container";
 import { ThemeToggle } from "@/components/ui/ThemeToggle";
 import { FavoritesLink } from "@/components/layout/FavoritesLink";
+import { PokemonLogo } from "@/components/layout/PokemonLogo";
 
 export function Header() {
   return (
@@ -17,16 +17,7 @@ export function Header() {
           className="transition-fast flex shrink-0 items-center justify-center hover:opacity-80"
           aria-label="Pokémon Explorer home"
         >
-          <Image
-            src="/pokemon-logo.png"
-            alt="Pokémon"
-            width={174}
-            height={64}
-            quality={65}
-            loading="eager"
-            fetchPriority="high"
-            className="h-11 w-auto drop-shadow-sm sm:h-12"
-          />
+          <PokemonLogo className="h-11 w-auto drop-shadow-sm sm:h-12" />
         </Link>
 
         <div className="flex flex-1 items-center justify-end gap-2">

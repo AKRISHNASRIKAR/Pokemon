@@ -66,7 +66,7 @@ export function StatSpeedometer({
           </span>
         </div>
       </div>
-      <span className="mt-3 text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
+      <span className="mt-3 text-[11px] font-bold uppercase tracking-widest text-muted-foreground">
         {label}
       </span>
     </div>

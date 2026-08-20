@@ -8,10 +8,11 @@ import { PokemonArtwork } from "@/components/pokemon/PokemonArtwork";
 interface ComparePanelProps {
   pokemon: Pokemon;
   isWinner: boolean;
+  priority?: boolean;
 }
 
 /** A trading-card-styled identity card for one side of the comparison. */
-export function ComparePanel({ pokemon, isWinner }: ComparePanelProps) {
+export function ComparePanel({ pokemon, isWinner, priority = false }: ComparePanelProps) {
   const artwork = getPokemonArtwork(pokemon.sprites);
   const primaryType = pokemon.types[0]?.type.name ?? "normal";
   const totalStats = pokemon.stats.reduce((sum, stat) => sum + stat.base_stat, 0);
@@ -55,6 +56,7 @@ export function ComparePanel({ pokemon, isWinner }: ComparePanelProps) {
               src={artwork}
               alt={capitalize(pokemon.name)}
               sizes="(min-width: 640px) 13rem, 11rem"
+              priority={priority}
               fallbackClassName="size-8"
               className="relative object-contain p-3 transition-transform duration-300 ease-out group-hover:scale-110"
             />

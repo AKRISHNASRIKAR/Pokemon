@@ -2,7 +2,7 @@ import { Suspense } from "react";
 import type { Metadata } from "next";
 import { Container } from "@/components/layout/Container";
 import { CompareView } from "@/components/compare/CompareView";
-import { getAllPokemonNames } from "@/services/pokemonApi";
+import { getAllPokemonNames, getPokemon } from "@/services/pokemonApi";
 
 export const metadata: Metadata = {
   title: "Compare Pokémon | Pokémon Explorer",
@@ -10,8 +10,18 @@ export const metadata: Metadata = {
     "Compare any two Pokémon side by side across base stats, height, and weight.",
 };
 
-export default async function ComparePage() {
-  const names = await getAllPokemonNames();
+interface ComparePageProps {
+  searchParams: Promise<{ a?: string; b?: string }>;
+}
+
+export default async function ComparePage({ searchParams }: ComparePageProps) {
+  const { a, b } = await searchParams;
+
+  const [names, initialPokemonA, initialPokemonB] = await Promise.all([
+    getAllPokemonNames(),
+    a ? getPokemon(a).catch(() => null) : null,
+    b ? getPokemon(b).catch(() => null) : null,
+  ]);
 
   return (
     <Container className="flex flex-col gap-3 py-8 md:py-12">
@@ -33,7 +43,11 @@ export default async function ComparePage() {
           </div>
         }
       >
-        <CompareView allNames={names.map((item) => item.name)} />
+        <CompareView
+          allNames={names.map((item) => item.name)}
+          initialPokemonA={initialPokemonA}
+          initialPokemonB={initialPokemonB}
+        />
       </Suspense>
     </Container>
   );

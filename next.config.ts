@@ -19,6 +19,9 @@ const nextConfig: NextConfig = {
     // Tailwind's per-page CSS is small, so inlining it in <head> removes the
     // render-blocking stylesheet request entirely for first-time visitors.
     inlineCss: true,
+    // Only the icons/motion features actually imported get bundled, instead
+    // of Next's default per-module chunking pulling in more of the package.
+    optimizePackageImports: ["lucide-react", "framer-motion"],
   },
 };
 
