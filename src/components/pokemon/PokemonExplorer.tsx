@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { Loader2, RefreshCw, Search, SlidersHorizontal, X } from "lucide-react";
 import {
   isPokemonTypeName,
@@ -41,20 +41,17 @@ export function PokemonExplorer({
 }: PokemonExplorerProps) {
   const router = useRouter();
   const pathname = usePathname();
-  const searchParams = useSearchParams();
 
-  const initialQuery = searchParams.get("q") ?? "";
-  const initialType = searchParams.get("type");
-  const initialSort = searchParams.get("sort");
-
-  const [query, setQuery] = useState(initialQuery);
-  const [debouncedQuery, setDebouncedQuery] = useState(initialQuery);
-  const [selectedType, setSelectedType] = useState<PokemonTypeName | null>(
-    initialType && isPokemonTypeName(initialType) ? initialType : null
-  );
-  const [sort, setSort] = useState<SortKey>(
-    initialSort && isSortKey(initialSort) ? initialSort : "id"
-  );
+  // Deliberately not seeded from useSearchParams(): that hook forces this
+  // whole subtree to fall back to its Suspense skeleton during static
+  // rendering (no request URL exists at build time), which meant the real
+  // grid — and its LCP image — never made it into the shipped HTML. Any
+  // `?q=&type=&sort=` deep link is applied a moment later instead, from
+  // plain `window.location.search` in an effect below.
+  const [query, setQuery] = useState("");
+  const [debouncedQuery, setDebouncedQuery] = useState("");
+  const [selectedType, setSelectedType] = useState<PokemonTypeName | null>(null);
+  const [sort, setSort] = useState<SortKey>("id");
   const [showFilters, setShowFilters] = useState(false);
 
   const [matchingNames, setMatchingNames] = useState<string[]>([]);
@@ -73,6 +70,26 @@ export function PokemonExplorer({
   const filtersButtonRef = useRef<HTMLButtonElement>(null);
   const typeCache = useRef(new Map<PokemonTypeName, string[]>());
   const requestId = useRef(0);
+  const initialSync = useRef(true);
+
+  // Apply a `?q=&type=&sort=` deep link once, after mount. Runs after the
+  // URL-writing effect below skips its own first pass, so this can't get
+  // immediately clobbered by that effect replacing the URL with its
+  // (still-default) state.
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const urlQuery = params.get("q");
+    const urlType = params.get("type");
+    const urlSort = params.get("sort");
+
+    if (urlQuery) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- seeding from window.location, an external system, not synchronizing React state
+      setQuery(urlQuery);
+      setDebouncedQuery(urlQuery.trim().toLowerCase());
+    }
+    if (urlType && isPokemonTypeName(urlType)) setSelectedType(urlType);
+    if (urlSort && isSortKey(urlSort)) setSort(urlSort);
+  }, []);
 
   useEffect(() => {
     const timeout = setTimeout(
@@ -83,6 +100,11 @@ export function PokemonExplorer({
   }, [query]);
 
   useEffect(() => {
+    if (initialSync.current) {
+      initialSync.current = false;
+      return;
+    }
+
     const params = new URLSearchParams();
     if (debouncedQuery) params.set("q", debouncedQuery);
     if (selectedType) params.set("type", selectedType);
