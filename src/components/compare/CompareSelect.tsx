@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Search, X } from "lucide-react";
 import { capitalize, cn } from "@/lib/utils";
 
@@ -23,6 +23,7 @@ export function CompareSelect({
   const [query, setQuery] = useState("");
   const [isOpen, setIsOpen] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
 
   const suggestions = useMemo(() => {
     const term = query.trim().toLowerCase();
@@ -32,6 +33,32 @@ export function CompareSelect({
       .slice(0, MAX_SUGGESTIONS);
   }, [query, allNames]);
 
+  // Close on outside click or Escape, rather than on input blur, so
+  // Tab-ing from the input into a suggestion doesn't unmount the list out
+  // from under the newly focused button.
+  useEffect(() => {
+    if (!isOpen) return;
+
+    function handlePointerDown(event: MouseEvent) {
+      if (!containerRef.current?.contains(event.target as Node)) {
+        setIsOpen(false);
+      }
+    }
+    function handleKeyDown(event: KeyboardEvent) {
+      if (event.key === "Escape") {
+        setIsOpen(false);
+        inputRef.current?.focus();
+      }
+    }
+
+    document.addEventListener("mousedown", handlePointerDown);
+    document.addEventListener("keydown", handleKeyDown);
+    return () => {
+      document.removeEventListener("mousedown", handlePointerDown);
+      document.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [isOpen]);
+
   function pick(name: string) {
     onChange(name);
     setQuery("");
@@ -40,7 +67,7 @@ export function CompareSelect({
   }
 
   return (
-    <div className="relative w-full max-w-xs">
+    <div ref={containerRef} className="relative w-full max-w-xs">
       <label className="mb-2 block text-xs font-medium tracking-wide text-muted-foreground uppercase">
         {label}
       </label>
@@ -69,7 +96,6 @@ export function CompareSelect({
               setIsOpen(true);
             }}
             onFocus={() => setIsOpen(true)}
-            onBlur={() => setTimeout(() => setIsOpen(false), 120)}
             placeholder="Search a Pokémon..."
             aria-label={label}
             className="no-focus-ring w-full rounded-full border border-border bg-surface py-2.5 pr-4 pl-10 text-sm text-foreground placeholder:text-muted-foreground focus:border-border-strong"

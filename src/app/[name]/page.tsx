@@ -8,6 +8,7 @@ import { StatBar } from "@/components/pokemon/StatBar";
 import { MovesList } from "@/components/pokemon/MovesList";
 import { PokemonGrid } from "@/components/pokemon/PokemonGrid";
 import { PokemonArtwork } from "@/components/pokemon/PokemonArtwork";
+import { FavoriteButton } from "@/components/pokemon/FavoriteButton";
 import {
   getPokemon,
   getPokemonSpecies,
@@ -86,9 +87,15 @@ export default async function PokemonPage({ params }: PokemonPageProps) {
         </div>
 
         <div className="flex flex-col gap-4">
-          <span className="text-sm font-medium text-muted-foreground">
-            {formatPokemonId(pokemon.id)}
-          </span>
+          <div className="flex items-center justify-between gap-3">
+            <span className="text-sm font-medium text-muted-foreground">
+              {formatPokemonId(pokemon.id)}
+            </span>
+            <FavoriteButton
+              name={pokemon.name}
+              className="size-10 border border-border bg-surface shadow-sm hover:scale-105"
+            />
+          </div>
           <h1 className="text-4xl font-semibold tracking-tight text-foreground md:text-5xl">
             {capitalize(pokemon.name)}
           </h1>

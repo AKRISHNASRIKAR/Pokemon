@@ -70,6 +70,7 @@ export function PokemonExplorer({
   >("idle");
 
   const searchInputRef = useRef<HTMLInputElement>(null);
+  const filtersButtonRef = useRef<HTMLButtonElement>(null);
   const typeCache = useRef(new Map<PokemonTypeName, string[]>());
   const requestId = useRef(0);
 
@@ -116,6 +117,19 @@ export function PokemonExplorer({
     document.addEventListener("keydown", focusSearchOnSlash);
     return () => document.removeEventListener("keydown", focusSearchOnSlash);
   }, []);
+
+  useEffect(() => {
+    if (!showFilters) return;
+
+    function closeOnEscape(event: KeyboardEvent) {
+      if (event.key !== "Escape") return;
+      setShowFilters(false);
+      filtersButtonRef.current?.focus();
+    }
+
+    document.addEventListener("keydown", closeOnEscape);
+    return () => document.removeEventListener("keydown", closeOnEscape);
+  }, [showFilters]);
 
   function handleSearchKeyDown(event: React.KeyboardEvent<HTMLInputElement>) {
     if (event.key !== "Escape") return;
@@ -268,6 +282,7 @@ export function PokemonExplorer({
 
         <div className="flex gap-3">
           <button
+            ref={filtersButtonRef}
             type="button"
             onClick={() => setShowFilters((value) => !value)}
             aria-expanded={showFilters}

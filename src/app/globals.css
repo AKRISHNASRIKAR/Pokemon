@@ -354,6 +354,46 @@ select:not(:disabled),
 }
 
 /* ==========================================================================
+   Pokémon card — trading-card frame
+   A gradient "foil" border in the Pokémon's type color wraps a dark panel,
+   with a diagonal holo sweep that plays across the artwork on hover/focus —
+   evoking a physical trading card rather than a generic web card.
+   ========================================================================== */
+
+.pokemon-card-frame {
+  background: linear-gradient(
+    155deg,
+    var(--type-color),
+    color-mix(in srgb, var(--type-color) 35%, black 25%)
+  );
+}
+
+@keyframes holo-sweep {
+  from {
+    transform: translate3d(-60%, -60%, 0) rotate(20deg);
+  }
+  to {
+    transform: translate3d(60%, 60%, 0) rotate(20deg);
+  }
+}
+
+.holo-sweep {
+  background: linear-gradient(
+    75deg,
+    transparent 42%,
+    rgb(255 255 255 / 0.5) 50%,
+    transparent 58%
+  );
+  opacity: 0;
+}
+
+.group:hover .holo-sweep,
+.group:focus-visible .holo-sweep {
+  opacity: 1;
+  animation: holo-sweep 1000ms ease forwards;
+}
+
+/* ==========================================================================
    Theme toggle — a slow, dimmed crossfade instead of the instant class swap.
    ========================================================================== */
 
