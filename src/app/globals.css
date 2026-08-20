@@ -40,12 +40,11 @@
 
   /* A soft two-tone glow for standout CTAs (e.g. "Load More"), built from
      the same type-color tokens used everywhere else rather than new hex. */
-  --gradient-glow: linear-gradient(135deg, var(--type-water), var(--type-electric));
-  --shadow-glow: 0 6px 20px -6px color-mix(in srgb, var(--type-water) 55%, transparent),
-    0 10px 30px -8px color-mix(in srgb, var(--type-electric) 55%, transparent);
-  --shadow-glow-hover: 0 8px 24px -4px
-      color-mix(in srgb, var(--type-water) 65%, transparent),
-    0 14px 38px -6px color-mix(in srgb, var(--type-electric) 65%, transparent);
+  --gradient-glow: linear-gradient(135deg, #4f46e5 0%, #2563eb 50%, #06b6d4 100%);
+  --shadow-glow: 0 6px 20px -4px rgba(79, 70, 229, 0.35),
+    0 10px 28px -6px rgba(37, 99, 235, 0.3);
+  --shadow-glow-hover: 0 8px 28px -2px rgba(79, 70, 229, 0.5),
+    0 14px 36px -4px rgba(6, 182, 212, 0.4);
 
   --transition-fast: 150ms ease;
   --transition-normal: 250ms ease;
