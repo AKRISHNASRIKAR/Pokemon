@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/Button";
 
 export function Hero() {
   return (
-    <div className="flex flex-col gap-3 py-10 md:py-16">
+    <div className="flex flex-col gap-3 pt-4 pb-10 md:pt-6 md:pb-16">
       <span className="text-sm font-medium tracking-wide text-muted uppercase">
         Powered by PokéAPI
       </span>

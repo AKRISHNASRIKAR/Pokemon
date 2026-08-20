@@ -3,6 +3,15 @@
 A modern, responsive Pokémon browser built on [PokéAPI](https://pokeapi.co).
 Search, filter, sort, compare, and favorite your way through the Pokédex.
 
+## Screenshots
+
+| | |
+| --- | --- |
+| ![Landing page, dark mode](screenshots/home.jpg) | ![Landing page, light mode](screenshots/home-light.jpg) |
+| Landing page — dark mode | Landing page — light mode |
+| ![Pokémon detail view](screenshots/detail.jpg) | ![Compare two Pokémon](screenshots/compare.jpg) |
+| Detail view | Compare view |
+
 ## Features
 
 - **Card-based Pokémon grid** styled like a trading card: a type-colored
