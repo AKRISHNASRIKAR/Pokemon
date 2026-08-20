@@ -19,7 +19,8 @@ Search, filter, sort, compare, and favorite your way through the Pokédex.
 - **Compare two Pokémon** (`/compare`) side-by-side, category by category,
   with the higher stat highlighted and a base-stat-total "leader" badge
 - **Favorites.** Click the heart on any card or detail page to save it,
-  persisted to `localStorage`, no account needed
+  persisted to `localStorage`, no account needed. View all your saved 
+  Pokémon on the dedicated `/favorites` page.
 - **Dark / light mode** with a smooth crossfade transition, remembered
   across visits
 - **URL-synced state.** Search, type filter, sort, and both compare picks
@@ -140,8 +141,6 @@ strip without either call site knowing about the other.
 
 ## Future Improvements
 
-- A dedicated "Favorites" view/filter to browse everything you've saved,
-  not just toggle it from a card
 - Infinite scroll as an alternative to "Load More"
 - Evolution chain data on the detail page
 - Move details (type, power, accuracy) instead of just names

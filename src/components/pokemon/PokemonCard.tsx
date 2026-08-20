@@ -29,22 +29,22 @@ export function PokemonCard({
   const href = `/${pokemon.name}`;
 
   return (
-    <div className={`type-${primaryType} relative`}>
-      <Link
-        href={href}
-        className="group block rounded-[26px] focus-visible:outline-none"
-        aria-label={`View details for ${capitalize(pokemon.name)}`}
-      >
-        <TiltCard className="rounded-[26px]">
-          <m.article
-            initial={{ opacity: 0, y: 16 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{
-              duration: 0.4,
-              delay: Math.min(index * 0.04, 0.4),
-              ease: "easeOut",
-            }}
-            className="pokemon-card-frame transition-normal relative rounded-[26px] p-[3px] shadow-sm group-hover:shadow-xl group-focus-visible:outline-2 group-focus-visible:outline-offset-2 group-focus-visible:outline-info"
+    <div className={`type-${primaryType} group relative block`}>
+      <TiltCard className="rounded-[26px]">
+        <m.article
+          initial={{ opacity: 0, y: 16 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{
+            duration: 0.4,
+            delay: Math.min(index * 0.04, 0.4),
+            ease: "easeOut",
+          }}
+          className="pokemon-card-frame transition-normal relative rounded-[26px] p-[3px] shadow-sm group-hover:shadow-xl focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-info"
+        >
+          <Link
+            href={href}
+            className="block focus-visible:outline-none"
+            aria-label={`View details for ${capitalize(pokemon.name)}`}
           >
             <div className="flex h-full flex-col gap-3 rounded-[23px] border border-[var(--card-border)] bg-[var(--card-surface)] p-3.5">
               {/* Header: name + HP, like a card's name/HP plate */}
@@ -91,14 +91,14 @@ export function PokemonCard({
                 </div>
               </div>
             </div>
-          </m.article>
-        </TiltCard>
-      </Link>
+          </Link>
 
-      <FavoriteButton
-        name={pokemon.name}
-        className="absolute -top-2.5 -right-2.5 z-20 size-9 border border-[var(--card-border)] bg-[var(--card-surface)] text-white shadow-md hover:scale-105 hover:text-white"
-      />
+          <FavoriteButton
+            name={pokemon.name}
+            className="absolute -top-2 -right-2 z-20 size-9 border border-[var(--card-border)] bg-[var(--card-surface)] text-[var(--card-foreground)] shadow-md hover:scale-105"
+          />
+        </m.article>
+      </TiltCard>
     </div>
   );
 }

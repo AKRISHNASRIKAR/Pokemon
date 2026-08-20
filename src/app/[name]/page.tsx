@@ -4,7 +4,7 @@ import type { Metadata } from "next";
 import { Container } from "@/components/layout/Container";
 import { BackLink } from "@/components/ui/BackLink";
 import { TypeBadge } from "@/components/pokemon/TypeBadge";
-import { StatBar } from "@/components/pokemon/StatBar";
+import { StatSpeedometer } from "@/components/pokemon/StatSpeedometer";
 import { MovesList } from "@/components/pokemon/MovesList";
 import { PokemonGrid } from "@/components/pokemon/PokemonGrid";
 import { PokemonArtwork } from "@/components/pokemon/PokemonArtwork";
@@ -153,9 +153,9 @@ export default async function PokemonPage({ params }: PokemonPageProps) {
           <h2 className="text-lg font-semibold text-foreground">
             Base stats
           </h2>
-          <div className="flex flex-col gap-3">
+          <div className="grid grid-cols-2 gap-x-4 gap-y-8 sm:grid-cols-3">
             {pokemon.stats.map((stat) => (
-              <StatBar
+              <StatSpeedometer
                 key={stat.stat.name}
                 label={formatStatName(stat.stat.name)}
                 value={stat.base_stat}
