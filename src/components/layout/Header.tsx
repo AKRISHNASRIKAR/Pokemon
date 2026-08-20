@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { Container } from "@/components/layout/Container";
 import { ThemeToggle } from "@/components/ui/ThemeToggle";
+import { FavoritesLink } from "@/components/layout/FavoritesLink";
 
 export function Header() {
   return (
@@ -28,7 +29,8 @@ export function Header() {
           />
         </Link>
 
-        <div className="flex flex-1 items-center justify-end">
+        <div className="flex flex-1 items-center justify-end gap-2">
+          <FavoritesLink />
           <ThemeToggle />
         </div>
       </Container>
